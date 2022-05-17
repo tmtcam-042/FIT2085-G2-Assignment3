@@ -8,11 +8,44 @@ def lcg(modulus: int, a: int, c: int, seed: int) -> Generator[int, None, None]:
 
 class RandomGen:
     
-    def __init__(self) -> None:
-        raise NotImplementedError()
+    def __init__(self, seed: int=0) -> None:
+        self.seed = seed
+        self.randgen = lcg(pow(2, 32), 134775813, 1, seed)
+        next(self.randgen)  # To clear initial value of 1 from generator
 
     def randint(self, k: int) -> int:
-        raise NotImplementedError()
+        # Note for future selves: unit test - track binary numbers and confirm operation happens
+        randlist = []
+        for i in range(0,5):
+            binary_num = bin(next(self.randgen))  # Convert to binary and remove '0b' prefix
+            shifted_num = binary_num[2:18]  # Grab the 16 MSB of binary_num
+            randlist.append(shifted_num)
+
+        new_num = [0 for _ in range(16)]
+        for i in range(16):
+            count = 0
+            for j in range(len(randlist)):
+                if randlist[j][i] == "1":
+                    count += 1
+
+                if count >= 3:
+                    new_num[i] = "1"
+                else:
+                    new_num[i] = "0"
+
+        new_num = int("".join(new_num), 2)
+        output = (new_num % k) + 1
+        return output
+
 
 if __name__ == "__main__":
-    Random_gen = lcg(pow(2,32), 134775813, 1, 0)
+    # Random_gen = lcg(pow(2,32), 134775813, 1, 0)
+    # for num in Random_gen:
+    #     print(num)
+    r = RandomGen(21)
+    print(r.randint(100))
+    print(r.randint(100))
+    print(r.randint(100))
+    print(r.randint(100))
+    print(r.randint(100))
+    print(r.randint(100))
