@@ -15,7 +15,7 @@ def largest_prime(k: int) -> int:
             for j in range(i**2, k-1, i):
                 A[j] = False
 
-    return [i for i, b in enumerate(A) if b]
+    return max([i for i, b in enumerate(A) if b])
 
 if __name__ == "__main__":
     print(largest_prime(100))
