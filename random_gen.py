@@ -1,4 +1,5 @@
 from typing import Generator
+import time
 
 def lcg(modulus: int, a: int, c: int, seed: int) -> Generator[int, None, None]:
     """Linear congruential generator."""
@@ -42,7 +43,7 @@ if __name__ == "__main__":
     # Random_gen = lcg(pow(2,32), 134775813, 1, 0)
     # for num in Random_gen:
     #     print(num)
-    r = RandomGen(21)
+    r = RandomGen(int(time.strftime('%S')))
     print(r.randint(100))
     print(r.randint(100))
     print(r.randint(100))
