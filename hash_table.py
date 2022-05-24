@@ -8,8 +8,10 @@ __docformat__ = 'reStructuredText'
 __modified__ = '21/05/2020'
 __since__ = '14/05/2020'
 
+from potion import Potion
 from referential_array import ArrayR
 from typing import TypeVar, Generic
+
 T = TypeVar('T')
 
 
@@ -25,20 +27,39 @@ class LinearProbePotionTable(Generic[T]):
         table_size: current size of the hash table
     """
 
-    def __init__(self, max_potions: int, good_hash: bool=True, tablesize_override: int=-1) -> None:
+    def __init__(self, max_potions: int, good_hash: bool = True, tablesize_override: int = -1) -> None:
         # Statistic setting
         self.conflict_count = 0
         self.probe_max = 0
         self.probe_total = 0
-        raise NotImplementedError()
+
+        self.count = 0
+        self.table = None
+        self.table_size = 0
+
+        self.useHash = False
+
+        if tablesize_override != -1:
+            self.initalise_with_tablesize(tablesize_override)
+        else:
+            self.initalise_with_tablesize(max_potions * 2)
+
+        if good_hash:
+            self.useHash = True
 
     def hash(self, potion_name: str) -> int:
-        """"""
-        raise NotImplementedError()
+        """
+        Hashes the potions name
+        """
+        if self.useHash:
+            Potion.good_hash(potion_name, self.table_size)  # added a getter to the Potion class, unsure if this works
+        else:
+            Potion.bad_hash(potion_name, self.table_size)
 
     def statistics(self) -> tuple:
         """"""
-        raise NotImplementedError()
+        stat_tuple = (self.conflict_count, self.probe_total, self.probe_max,)
+        return stat_tuple
 
     def __len__(self) -> int:
         """
@@ -56,21 +77,30 @@ class LinearProbePotionTable(Generic[T]):
                            where N is the table_size
         :raises KeyError: When a position can't be found
         """
-        position = self.hash(key)  # get the position using hash
+        position = self.hash(key)  # get the position using hash i = 2
 
         if is_insert and self.is_full():
             raise KeyError(key)
 
+        probe_chain = []
+        conflict_check = 0
         for _ in range(len(self.table)):  # start traversing
             if self.table[position] is None:  # found empty slot
-                if is_insert:
-                    return position
-                else:
-                    raise KeyError(key)  # so the key is not in
-            elif self.table[position][0] == key:  # found key
+                self.conflict_count += conflict_check
+                if self.probe_max < len(probe_chain):
+                    self.probe_max = len(probe_chain)
+                if is_insert: # trying to insert (bool)
+                    return position # returns the position of empty slot
+                else: # not trying to insert (search)
+                    raise KeyError(key)  # so the key is not in the table (search function)
+            elif self.table[position][0] == key:  # found key (search function)
                 return position
-            else:  # there is something but not the key, try next
-                position = (position + 1) % len(self.table)
+            else:  # there is something but not the key, try next (inserting item)
+                if conflict_check == 0:
+                    conflict_check = 1
+                probe_chain.append(position)
+                position = (position + 1) % len(self.table)  # next index
+                self.probe_total += 1
 
         raise KeyError(key)
 
