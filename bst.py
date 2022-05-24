@@ -196,22 +196,6 @@ class BinarySearchTree(Generic[K, I]):
         else: # current node is the largest node in the subtree if it has no right branch
             return None
 
-        # #  If right subtree is None, then successor needs to be found from root.
-        # if not self.is_empty():
-        #     successor = TreeNode(None)
-        #     temp = current.left
-        #
-        #     while temp:
-        #         if temp.key < current.key:
-        #             temp = temp.right
-        #         elif temp.key > current.key:
-        #             successor = temp
-        #             temp = temp.left
-        #         else:
-        #             break
-        #
-        #     return successor
-
     def get_minimal(self, current: TreeNode) -> TreeNode:
         """
             Get a node having the smallest key in the current sub-tree.
