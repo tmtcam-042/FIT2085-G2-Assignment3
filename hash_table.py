@@ -94,7 +94,7 @@ class LinearProbePotionTable(Generic[T]):
                 else: # not trying to insert (search)
                     raise KeyError(key)  # so the key is not in the table (search function)
             elif self.table[position][0] == key:  # found key (search function)
-                return position
+                return position # return
             else:  # there is something but not the key, try next (inserting item)
                 if conflict_check == 0:
                     conflict_check = 1
