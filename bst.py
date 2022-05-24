@@ -197,13 +197,10 @@ class BinarySearchTree(Generic[K, I]):
         if current is None:  # base case: at the leaf
             raise ValueError('Subtree is empty')
         while current is not None:
-            if current.left is not None:
-                current = current.left
-            else:
+            if current.left is None:
                 return current
-
-
-        raise NotImplementedError()
+            else:
+                current = current.left
 
 
     def is_leaf(self, current: TreeNode) -> bool:
