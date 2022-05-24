@@ -21,8 +21,12 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
             Initialises an empty Binary Search Tree
             :complexity: O(1)
         """
-
         BinarySearchTree.__init__(self)
+
+    def __setitem__(self, key: K, item: I) -> None:
+        self.root = self.insert_aux(self.root, key, item)
+        self.root = self.rebalance(self.root)
+
 
     def get_height(self, current: AVLTreeNode) -> int:
         """
@@ -53,8 +57,17 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
             unbalanced.
             returns the new root of the subtree.
         """
-
-        raise NotImplementedError()
+        if current is None:  # base case: at the leaf
+            current = AVLTreeNode(key, item)
+            self.length += 1
+            return current
+        elif key < current.key:
+            current.left = self.insert_aux(current.left, key, item)
+        elif key > current.key:
+            current.right = self.insert_aux(current.right, key, item)
+        else:  # key == current.key
+            raise ValueError('Inserting duplicate item')
+        return current  # return new root of rebalanced tree
 
     def delete_aux(self, current: AVLTreeNode, key: K) -> AVLTreeNode:
         """
@@ -63,8 +76,31 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
             performs sub-tree rotation whenever it becomes unbalanced.
             returns the new root of the subtree.
         """
+        if current is None:  # key not found
+            raise ValueError('Deleting non-existent item')
+        elif key < current.key:
+            current.left  = self.delete_aux(current.left, key)
+        elif key > current.key:
+            current.right = self.delete_aux(current.right, key)
+        else:  # we found our key => do actual deletion
+            if self.is_leaf(current):
+                self.length -= 1
+                return None
+            elif current.left is None:
+                self.length -= 1
+                return current.right
+            elif current.right is None:
+                self.length -= 1
+                return current.left
 
-        raise NotImplementedError()
+            # general case => find a successor
+            succ = self.get_successor(current)
+            current.key  = succ.key
+            current.item = succ.item
+            current.right = self.delete_aux(current.right, succ.key)
+
+
+        return self.rebalance(self.root)
 
     def left_rotate(self, current: AVLTreeNode) -> AVLTreeNode:
         """
@@ -82,8 +118,15 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
 
             :complexity: O(1)
         """
-
-        raise NotImplementedError()
+        child = current.right
+        center = child.left
+        child.left = current
+        current.right = center
+        current.height = 1 + max(self.get_height(current.left),
+                           self.get_height(current.right))
+        child.height = 1 + max(self.get_height(child.left),
+                           self.get_height(child.right))
+        return child
 
     def right_rotate(self, current: AVLTreeNode) -> AVLTreeNode:
         """
@@ -101,8 +144,15 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
 
             :complexity: O(1)
         """
-
-        raise NotImplementedError()
+        child = current.left
+        center = child.right
+        child.right = current
+        current.left = center
+        current.height = 1 + max(self.get_height(current.left),
+                           self.get_height(current.right))
+        child.height = 1 + max(self.get_height(child.left),
+                           self.get_height(child.right))
+        return child
 
     def rebalance(self, current: AVLTreeNode) -> AVLTreeNode:
         """ Compute the balance of the current node.
@@ -126,6 +176,7 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
                 current.left = self.left_rotate(child)
             return self.right_rotate(current)
 
+        self.root = current
         return current
 
     def kth_largest(self, k: int) -> AVLTreeNode:
@@ -133,4 +184,46 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
         Returns the kth largest element in the tree.
         k=1 would return the largest.
         """
-        raise NotImplementedError()
+        current = self.root
+        largest = None
+
+        # count variable to keep count of visited Nodes
+        count = 0
+
+        while (current != None):
+            # if right child is None
+            if (current.right == None):
+                # first increment count and
+                # check if count = k
+                count += 1
+                if (count == k):
+                    largest = current
+                # otherwise move to the left child
+                current = current.left
+            else:
+                # find inorder successor of
+                # current Node
+                succ = current.right
+                while (succ.left != None and
+                       succ.left != current):
+                    succ = succ.left
+
+                if (succ.left == None):
+                    # set left child of successor
+                    # to the current Node
+                    succ.left = current
+                    # move current to its right
+                    current = current.right
+
+                # restoring the tree back to
+                # original binary search tree
+                # removing threaded links
+                else:
+                    succ.left = None
+                    count += 1
+                    if (count == k):
+                        largest = current
+                    # move current to its left child
+                    current = current.left
+
+        return largest
