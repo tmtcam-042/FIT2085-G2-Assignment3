@@ -27,4 +27,8 @@ class Potion:
         """"""
         return ord(potion_name[0]) % tablesize
 
-        raise NotImplementedError()
+if __name__ == '__main__':
+    health = Potion("health", "blue barrel", 60, 4)
+    hashnum = health.bad_hash("blue barrel", 3)
+    hashnum1 = health.good_hash("blue barrel", 3)
+    print(hashnum1)
