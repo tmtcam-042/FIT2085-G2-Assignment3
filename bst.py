@@ -185,14 +185,37 @@ class BinarySearchTree(Generic[K, I]):
             Get successor of the current node.
             It should be a child node having the smallest key among all the
             larger keys.
+
         """
-        raise NotImplementedError()
+        if current is None:  # base case: empty
+            raise ValueError("Current node is empty")
+
+        # If right subtree of current is not None, then successor is minimum key value of right subtree.
+        if current.right is not None:
+            return self.get_minimal(current.right)
+
+        #  If right subtree is None, then successor needs to be found from root.
+        if not self.is_empty():
+            successor = TreeNode(None)
+            temp = self.root
+
+            while temp:
+                if temp.key < current.key:
+                    temp = temp.right
+                elif temp.key > current.key:
+                    successor = temp
+                    temp = temp.left
+                else:
+                    break
+
+            return successor
 
     def get_minimal(self, current: TreeNode) -> TreeNode:
         """
             Get a node having the smallest key in the current sub-tree.
             Traverse from root of sub-tree to left recursively until left is None
-            The node whose left is None is the node with minimum value
+            The node whose left is None is the node with minimum value.
+            :pre: binary tree is sorted
         """
         if current is None:  # base case: at the leaf
             raise ValueError('Subtree is empty')
