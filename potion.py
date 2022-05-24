@@ -14,7 +14,13 @@ class Potion:
     @classmethod
     def good_hash(cls, potion_name: str, tablesize: int) -> int:
         """"""
-        raise NotImplementedError()
+        value = 0
+        a = 31415
+        b = 27183
+        for char in potion_name:
+            value = (ord(char) + a * value) % tablesize
+        a = a * b % (tablesize - 1)
+        return value
 
     @classmethod
     def bad_hash(cls, potion_name: str, tablesize: int) -> int:
