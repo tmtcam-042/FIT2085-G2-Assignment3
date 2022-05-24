@@ -38,4 +38,4 @@ def largest_prime(k: int) -> int:
 
 
 if __name__ == "__main__":
-    print(largest_prime(159))
+    print(largest_prime(20))
