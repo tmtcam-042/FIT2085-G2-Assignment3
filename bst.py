@@ -62,7 +62,6 @@ class BinarySearchTree(Generic[K, I]):
             Initialises an empty Binary Search Tree
             :complexity: O(1)
         """
-
         self.root = None
         self.length = 0
 
@@ -75,7 +74,6 @@ class BinarySearchTree(Generic[K, I]):
 
     def __len__(self) -> int:
         """ Returns the number of nodes in the tree. """
-
         return self.length
 
     def __contains__(self, key: K) -> bool:
@@ -193,8 +191,20 @@ class BinarySearchTree(Generic[K, I]):
     def get_minimal(self, current: TreeNode) -> TreeNode:
         """
             Get a node having the smallest key in the current sub-tree.
+            Traverse from root of sub-tree to left recursively until left is None
+            The node whose left is None is the node with minimum value
         """
+        if current is None:  # base case: at the leaf
+            raise ValueError('Subtree is empty')
+        while current is not None:
+            if current.left is not None:
+                current = current.left
+            else:
+                return current
+
+
         raise NotImplementedError()
+
 
     def is_leaf(self, current: TreeNode) -> bool:
         """ Simple check whether or not the node is a leaf. """
