@@ -52,9 +52,9 @@ class LinearProbePotionTable(Generic[T]):
         Hashes the potions name
         """
         if self.useHash:
-            Potion.good_hash(potion_name, self.table_size)  # added a getter to the Potion class, unsure if this works
+            return Potion.good_hash(potion_name, self.table_size)  # added a getter to the Potion class, unsure if this works
         else:
-            Potion.bad_hash(potion_name, self.table_size)
+            return Potion.bad_hash(potion_name, self.table_size)
 
     def statistics(self) -> tuple:
         """"""
