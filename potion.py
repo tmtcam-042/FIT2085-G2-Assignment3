@@ -9,7 +9,7 @@ class Potion:
     @classmethod
     def create_empty(cls, potion_type: str, name: str, buy_price: float) -> 'Potion':
         """"""
-        raise NotImplementedError()
+        return Potion(potion_type, name, buy_price, 0)
 
     @classmethod
     def good_hash(cls, potion_name: str, tablesize: int) -> int:

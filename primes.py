@@ -24,9 +24,10 @@ def largest_prime(k: int) -> int:
 
     primes_list[0] = False
     primes_list[1] = False
+
     # Print all prime numbers
     return max([i for i, b in enumerate(primes_list) if b])
 
 
 if __name__ == "__main__":
-    print(largest_prime(20))
+    print(largest_prime(100))
