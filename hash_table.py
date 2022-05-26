@@ -145,6 +145,7 @@ class LinearProbePotionTable(Generic[T]):
         Complexity: O(n), where n is len(tablesize)
         """
         self.count = 0
+        self.table_size = tablesize
         self.table = ArrayR(tablesize)
 
     def is_empty(self):

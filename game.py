@@ -2,14 +2,27 @@ from __future__ import annotations
 # ^ In case you aren't on Python 3.10
 
 from random_gen import RandomGen
+from hash_table import LinearProbePotionTable
+from potion import Potion
 
 class Game:
-    
+
     def __init__(self, seed=0) -> None:
         self.rand = RandomGen(seed=seed)
+        self.potion_table = None
     
     def set_total_potion_data(self, potion_data: list) -> None:
-        raise NotImplementedError()
+        """ Hash table!
+
+        :param potion_data:
+        :pre: List has to be correct, is not empty
+        :return:
+        """
+        self.potion_table = LinearProbePotionTable(len(potion_data))
+        for potion in potion_data:
+            name, _type, price = potion
+            self.potion_table[name] = Potion.create_empty(_type, name, price)
+            print(self.potion_table)
 
     def add_potions_to_inventory(self, potion_name_amount_pairs: list[tuple[str, float]]) -> None:
         raise NotImplementedError()
