@@ -35,9 +35,8 @@ class Game:
         for potion in potion_name_amount_pairs:
             name, amount = potion
             potion_object = self.potion_table[name]
-            self.inventory[potion_object] =
-
-        raise NotImplementedError()
+            self.inventory[potion_object.buy_price] = potion_object
+        self.inventory.draw()
 
     def choose_potions_for_vendors(self, num_vendors: int) -> list:
         raise NotImplementedError()
