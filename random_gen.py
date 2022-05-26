@@ -1,15 +1,17 @@
 from typing import Generator
 import time
 
+
 def lcg(modulus: int, a: int, c: int, seed: int) -> Generator[int, None, None]:
     """Linear congruential generator."""
     while True:
         seed = (a * seed + c) % modulus
         yield seed
 
+
 class RandomGen:
-    
-    def __init__(self, seed: int=0) -> None:
+
+    def __init__(self, seed: int = 0) -> None:
         self.seed = seed
         self.randgen = lcg(pow(2, 32), 134775813, 1, seed)
         next(self.randgen)  # To clear initial value of 1 from generator
@@ -17,7 +19,8 @@ class RandomGen:
     def randint(self, k: int) -> int:
         # Note for future selves: unit test - track binary numbers and confirm operation happens
         randlist = []
-        for i in range(0,5):
+        for i in range(0, 5):
+            # TODO: make this O(1)
             binary_num = bin(next(self.randgen))  # Convert to binary and remove '0b' prefix
             shifted_num = binary_num[2:18]  # Grab the 16 MSB of binary_num
             randlist.append(shifted_num)
