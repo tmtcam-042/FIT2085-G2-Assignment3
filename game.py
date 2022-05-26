@@ -4,12 +4,14 @@ from __future__ import annotations
 from random_gen import RandomGen
 from hash_table import LinearProbePotionTable
 from potion import Potion
+from bst import BinarySearchTree
 
 class Game:
 
     def __init__(self, seed=0) -> None:
         self.rand = RandomGen(seed=seed)
         self.potion_table = None
+        self.inventory = BinarySearchTree()
     
     def set_total_potion_data(self, potion_data: list) -> None:
         """ Hash table!
@@ -25,6 +27,16 @@ class Game:
             print(self.potion_table)
 
     def add_potions_to_inventory(self, potion_name_amount_pairs: list[tuple[str, float]]) -> None:
+        """
+        Binary tree!
+        :param potion_name_amount_pairs:
+        :return:
+        """
+        for potion in potion_name_amount_pairs:
+            name, amount = potion
+            potion_object = self.potion_table[name]
+            self.inventory[potion_object] =
+
         raise NotImplementedError()
 
     def choose_potions_for_vendors(self, num_vendors: int) -> list:
