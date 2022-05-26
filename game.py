@@ -45,24 +45,16 @@ class Game:
 
         """
         vendor_potion_list = []
+        # TODO: Some weird error here
         for i in range(num_vendors):
             p = self.rand.randint(len(self.potion_table))
-            minimal = self.inventory.get_minimal(self.inventory.root)
-
-            # successor = None
-            # for j in range(p):
-            #     successor = self.inventory.get_successor(minimal)
-            #
-            # if successor is not None:
-            #     name = successor.item(0).name
-            #     amount = successor.item(1)
-            #     vendor_potion_list.append((name, amount))
 
             for j, key in enumerate(self.inventory):
                 if p == j:
-                    name = self.inventory.get_tree_node_by_key(key).item[0].name
-                    amount = self.inventory.get_tree_node_by_key(key).item[1]
+                    node = self.inventory.get_tree_node_by_key(key).item
+                    name, amount = node[0].name, node[1]
                     vendor_potion_list.append((name, amount))
+                    del self.inventory[key]
                     break
 
         return vendor_potion_list
