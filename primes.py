@@ -7,15 +7,6 @@ def largest_prime(k: int) -> int:
 
     return all i such that A[i] is true.
     """
-    # A = [True for _ in range(k-1)]
-    # A[0] = False
-    # A[1] = False
-    # for i in range(2, int(k**0.5) + 1):
-    # if A[i]:
-    # for j in range(i**2, k-1, i):
-    # A[j] = False
-
-    # return max([i for i, b in enumerate(A) if b])
 
     primes_list = [True for i in range(k + 1)]
     p = 2
