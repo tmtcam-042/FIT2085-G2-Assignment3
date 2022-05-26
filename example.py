@@ -1,6 +1,7 @@
 from game import Game
+import time
 
-G = Game()
+G = Game(int(time.strftime('%S')))
 # There are these potions, with these stats, available over the course of the game.
 G.set_total_potion_data([
     # Name, Category, Buying price from vendors.

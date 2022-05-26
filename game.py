@@ -45,18 +45,21 @@ class Game:
 
         """
         vendor_potion_list = []
-        # TODO: Some weird error here
+        temp_inventory = self.inventory
         for i in range(num_vendors):
-            p = self.rand.randint(len(self.potion_table))
+            p = self.rand.randint(len(self.inventory))
 
             for j, key in enumerate(self.inventory):
-                if p == j:
+                if p == j + 1:
                     node = self.inventory.get_tree_node_by_key(key).item
                     name, amount = node[0].name, node[1]
                     vendor_potion_list.append((name, amount))
                     del self.inventory[key]
                     break
 
+            self.inventory.draw()
+
+        self.inventory = temp_inventory
         return vendor_potion_list
 
     def solve_game(self, potion_valuations: list[tuple[str, float]], starting_money: list[int]) -> list[float]:
