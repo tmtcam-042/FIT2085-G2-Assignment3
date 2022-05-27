@@ -16,6 +16,7 @@ G.set_total_potion_data([
 # Start of Day 1
 # Let’s begin by adding to the inventory of PotionCorp:
 G.add_potions_to_inventory([
+    # (name, quantity)
     ("Potion of Health Regeneration", 4),
     ("Potion of Extreme Speed", 5),
     ("Potion of Instant Health", 3),
@@ -35,6 +36,7 @@ print(selling)
 
 # Let’s suppose that the adventurers will pay 30, 15, 15, and 20 dollars per litre for each of the potions listed below.
 full_vendor_info = [
+    # (name. adventurer_buy_price)
     ("Potion of Health Regeneration", 30),
     ("Potion of Extreme Speed", 15),
     ("Potion of Instant Health", 15),
