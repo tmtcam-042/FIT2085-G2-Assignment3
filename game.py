@@ -108,31 +108,51 @@ class Game:
             name, valuation = potion_valuations[i]
             vendor_buy_price = self.potion_table[name].buy_price
             profit_margin = valuation - vendor_buy_price
-            ratio = profit_margin/vendor_buy_price
+            ratio = profit_margin / vendor_buy_price
             quantity = self.potion_table[name].quantity
-            profit_ratio[ratio] = (name, vendor_buy_price, valuation, profit_margin, quantity)
 
+            # assuming normal potions
+            profit_ratio[ratio + vendor_buy_price] = (name, vendor_buy_price, valuation, profit_margin, ratio, quantity)
 
         for money in starting_money:
             max_ratio = 0
             for ratio in profit_ratio:
                 if ratio > max_ratio:
                     max_ratio = ratio
-            best_ratio_item = profit_ratio.get_minimal(profit_ratio.root)
 
+            profit_for_day = 0
+            while profit_ratio.root is not None and money > 0:
+                best_ratio_item = profit_ratio.get_minimal(profit_ratio.root)
+                name, vendor_buy_price, valuation, profit_margin, ratio, quantity = best_ratio_item.item
 
+                # when we can buy all of the potion. -> Potion finishes
+                if money >= quantity * vendor_buy_price:
+                    quantity = money / vendor_buy_price
+                    profit_for_day += quantity * valuation
+                    money -= quantity * vendor_buy_price
+                    del profit_ratio[best_ratio_item.key]
+                else:
+                    # we spend all our money buying the potions
+                    # (which is available in sufficient quantity) -> Money Finishes
+                    profit_for_day += money * profit_margin
+                    break
 
-            index_of_max_ratio = profit_ratio.index(max_ratio)
-            potion_details = potion_valuations[index_of_max_ratio]
-            name = self.potion_table[potion_details[0]].name
-            quantity = self.potion_table[potion_details[0]].quantity
+            print(f"DAY PROFIT RATIO: {profit_for_day}")
 
-            bought_quantity =
-            print(name, quantity)
+            # if our money exceeds amount of available potion
+            # otherwise find next available potion
 
-
-
-        print(f"HELLOWW!: {cheapest_potion}")
+        #     index_of_max_ratio = profit_ratio.index(max_ratio)
+        #     potion_details = potion_valuations[index_of_max_ratio]
+        #     name = self.potion_table[potion_details[0]].name
+        #     quantity = self.potion_table[potion_details[0]].quantity
+        #
+        #     bought_quantity =
+        #     print(name, quantity)
+        #
+        #
+        #
+        # print(f"HELLOWW!: {cheapest_potion}")
         # for money in starting_money:
 
         return day_profits
