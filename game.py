@@ -44,6 +44,7 @@ class Game:
         """
 
         """
+        self.inventory.print_tree()
         vendor_potion_list = []
         saved_inventory = self.inventory
         for i in range(num_vendors):
@@ -59,7 +60,7 @@ class Game:
                     break
 
         self.inventory = saved_inventory
-        self.inventory.draw()
+        self.inventory.print_tree()
         return vendor_potion_list
 
     def solve_game(self, potion_valuations: list[tuple[str, float]], starting_money: list[int]) -> list[float]:
