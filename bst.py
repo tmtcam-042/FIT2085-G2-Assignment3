@@ -11,7 +11,6 @@ __docformat__ = 'reStructuredText'
 from typing import TypeVar, Generic
 from linked_stack import LinkedStack
 from node import TreeNode
-from bst_draw import BstNode
 import sys
 
 
