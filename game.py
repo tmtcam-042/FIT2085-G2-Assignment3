@@ -46,7 +46,7 @@ class Game:
         """
         self.inventory.print_tree()
         vendor_potion_list = []
-        temp_inventory = self.inventory
+        saved_inventory = self.inventory
         for i in range(num_vendors):
             p = self.rand.randint(len(self.inventory))
 
@@ -58,7 +58,7 @@ class Game:
                     del self.inventory[key]
                     break
 
-        self.inventory = temp_inventory
+        self.inventory = saved_inventory
         self.inventory.print_tree()
         return vendor_potion_list
 
