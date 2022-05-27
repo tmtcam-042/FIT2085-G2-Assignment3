@@ -27,7 +27,6 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
         self.root = self.insert_aux(self.root, key, item)
         self.root = self.rebalance(self.root)
 
-
     def get_height(self, current: AVLTreeNode) -> int:
         """
             Get the height of a node. Return current.height if current is 
@@ -99,7 +98,6 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
             current.item = succ.item
             current.right = self.delete_aux(current.right, succ.key)
 
-
         return self.rebalance(self.root)
 
     def left_rotate(self, current: AVLTreeNode) -> AVLTreeNode:
@@ -122,10 +120,9 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
         center = child.left
         child.left = current
         current.right = center
-        current.height = 1 + max(self.get_height(current.left),
-                           self.get_height(current.right))
-        child.height = 1 + max(self.get_height(child.left),
-                           self.get_height(child.right))
+        current.height = 1 + max(self.get_height(current.left), self.get_height(current.right))
+        child.height = 1 + max(self.get_height(child.left), self.get_height(child.right))
+
         return child
 
     def right_rotate(self, current: AVLTreeNode) -> AVLTreeNode:
@@ -148,10 +145,9 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
         center = child.right
         child.right = current
         current.left = center
-        current.height = 1 + max(self.get_height(current.left),
-                           self.get_height(current.right))
-        child.height = 1 + max(self.get_height(child.left),
-                           self.get_height(child.right))
+        current.height = 1 + max(self.get_height(current.left), self.get_height(current.right))
+        child.height = 1 + max(self.get_height(child.left), self.get_height(child.right))
+
         return child
 
     def rebalance(self, current: AVLTreeNode) -> AVLTreeNode:
@@ -177,6 +173,7 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
             return self.right_rotate(current)
 
         self.root = current
+        print("Rebalanced!")
         return current
 
     def kth_largest(self, k: int) -> AVLTreeNode:
