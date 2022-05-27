@@ -100,9 +100,36 @@ class Game:
         #     if current_highest_margin <= profit_margin:
         #         current_highest_margin = profit_margin
         #         cheapest_potion.append(key)
-        cheapest_potion = ArrayList(len(potion_valuations))
+
+        profit_ratio = BinarySearchTree()
+
+        # profit_ratio = ArrayList(len(potion_valuations))
         for i in range(len(potion_valuations)):
-            pass
+            name, valuation = potion_valuations[i]
+            vendor_buy_price = self.potion_table[name].buy_price
+            profit_margin = valuation - vendor_buy_price
+            ratio = profit_margin/vendor_buy_price
+            quantity = self.potion_table[name].quantity
+            profit_ratio[ratio] = (name, vendor_buy_price, valuation, profit_margin, quantity)
+
+
+        for money in starting_money:
+            max_ratio = 0
+            for ratio in profit_ratio:
+                if ratio > max_ratio:
+                    max_ratio = ratio
+            best_ratio_item = profit_ratio.get_minimal(profit_ratio.root)
+
+
+
+            index_of_max_ratio = profit_ratio.index(max_ratio)
+            potion_details = potion_valuations[index_of_max_ratio]
+            name = self.potion_table[potion_details[0]].name
+            quantity = self.potion_table[potion_details[0]].quantity
+
+            bought_quantity =
+            print(name, quantity)
+
 
 
         print(f"HELLOWW!: {cheapest_potion}")
