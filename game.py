@@ -110,8 +110,11 @@ class Game:
             profit_margin = valuation - vendor_buy_price
             ratio = profit_margin / vendor_buy_price
             quantity = self.potion_table[name].quantity
+            print(f"Quantity: {quantity}")
+            # TODO: Potion of increased stamina sometimes sets quantity to 0??
 
             # assuming normal potions
+            # TODO: THIS IS BAD SORTING
             profit_ratio[ratio + vendor_buy_price] = (name, vendor_buy_price, valuation, profit_margin, ratio, quantity)
 
         for money in starting_money:
@@ -127,14 +130,14 @@ class Game:
 
                 # when we can buy all of the potion. -> Potion finishes
                 if money >= quantity * vendor_buy_price:
-                    quantity = money / vendor_buy_price
-                    profit_for_day += quantity * valuation
-                    money -= quantity * vendor_buy_price
-                    del profit_ratio[best_ratio_item.key]
+                    profit_for_day += quantity * valuation  # Money earned from sale of potion
+                    money -= quantity * vendor_buy_price  # Available money is reduced
+                    del profit_ratio[best_ratio_item.key]  # Remove potion from tree so it can't be repurchased
                 else:
                     # we spend all our money buying the potions
                     # (which is available in sufficient quantity) -> Money Finishes
-                    profit_for_day += money * profit_margin
+                    quantity = money / vendor_buy_price  # quantity of potion purchased (L)
+                    profit_for_day += quantity * valuation  # money earned from sale of potion
                     break
 
             print(f"DAY PROFIT RATIO: {profit_for_day}")
