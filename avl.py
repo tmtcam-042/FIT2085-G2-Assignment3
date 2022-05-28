@@ -25,7 +25,7 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
 
     def __setitem__(self, key: K, item: I) -> None:
         self.root = self.insert_aux(self.root, key, item)
-        self.root = self.rebalance(self.root)
+        self.print_tree()
 
     def insert_aux(self, current: AVLTreeNode, key: K, item: I) -> AVLTreeNode:
         """
@@ -42,11 +42,11 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
             current.left = self.insert_aux(current.left, key, item)
         elif key > current.key:
             current.right = self.insert_aux(current.right, key, item)
-        else:  # key == current.key
+        else:  # key == current.key. Duplication should cause error
             raise ValueError('Inserting duplicate item')
 
-        # Finally, update heights and balance factors of current root after insertion completed (postorder processing)
-        current.height = max(self.get_height(current.left), self.get_height(current.right) + 1
+        # Finally, update heights rebalance current root after insertion completed (postorder processing)
+        current.height = max(self.get_height(current.left), self.get_height(current.right)) + 1
         return self.rebalance(current)  # return new root of rebalanced tree
 
     def get_height(self, current: AVLTreeNode) -> int:
@@ -227,3 +227,15 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
                     current = current.left
 
         return largest
+
+
+if __name__ == '__main__':
+    b = AVLTree()
+    b[15] = "A"
+    b[10] = "B"
+    b[20] = "C"
+    b[17] = "D"
+    b[5] = "E"
+    b[3] = "F"
+    b[4] = "G"
+    b[22] = "H"
