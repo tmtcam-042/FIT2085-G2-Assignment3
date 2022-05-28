@@ -1,11 +1,13 @@
 from __future__ import annotations
 # ^ In case you aren't on Python 3.10
-
+from linked_stack import LinkedStack
 from random_gen import RandomGen
 from hash_table import LinearProbePotionTable
 from potion import Potion
 from avl import AVLTree
 from array_list import ArrayList
+from stack_adt import Stack
+
 
 
 class Game:
@@ -37,8 +39,8 @@ class Game:
         """
         for potion in potion_name_amount_pairs:
             name, amount = potion
-            self.potion_table[name].quantity = amount
             potion_object = self.potion_table[name]
+            potion_object.quantity = amount
             self.inventory[potion_object.buy_price] = (potion_object, amount)
         self.inventory.print_tree()
 
@@ -57,7 +59,7 @@ class Game:
                 if p == j + 1:
                     node = self.inventory.get_tree_node_by_key(key).item
                     name, amount = node[0].name, node[1]
-                    # self.potion_table[name].quantity = amount
+                    self.potion_table[name].quantity = amount
                     vendor_potion_list.append((name, amount))
                     del self.inventory[key]
                     break
@@ -104,8 +106,8 @@ class Game:
 
         ratio_tree = AVLTree()
         # ratio_tree = ArrayList(len(potion_valuations))
-        for i in range(len(potion_valuations)):
-            duplicates_list = []
+        for i in range(len(potion_valuations)): # O(N)
+            duplicates = LinkedStack()
             name, valuation = potion_valuations[i]
             # print(f"Name: {name}")
             vendor_buy_price = self.potion_table[name].buy_price
@@ -113,30 +115,32 @@ class Game:
             ratio = profit_margin / vendor_buy_price
             quantity = self.potion_table[name].quantity
             print(f"Quantity: {quantity}")
-            # TODO: Potion of increased stamina sometimes sets quantity to 0??
 
             # assuming normal potions
-            # TODO: THIS IS BAD SORTING
             if not ratio_tree.__contains__(ratio):
-                ratio_tree[ratio] = (name, vendor_buy_price, valuation, profit_margin, ratio, quantity)
+                ratio_tree[ratio] = (False, (name, vendor_buy_price, valuation, profit_margin, ratio, quantity))
             else:
-                duplicate = ratio_tree[ratio]
-                duplicates_list.append(ratio)
+                duplicate_value = ratio_tree[ratio]
                 del ratio_tree[ratio]
-                dup_binary = ArrayList(5)
-                dup_binary.append(duplicate)
-                dup_binary.append((name, vendor_buy_price, valuation, profit_margin, ratio, quantity))
-                ratio_tree[ratio] = dup_binary
+                duplicates.push(duplicate_value)
+                duplicates.push((name, vendor_buy_price, valuation, profit_margin, ratio, quantity))
+                ratio_tree[ratio] = (True, duplicates)
 
-        for money in starting_money:
+        for money in starting_money: # O(M)
             profit_for_day = 0
             max_ratio = 0
-            for ratio in ratio_tree:
+            for ratio in ratio_tree: # O(Log(N))
                 if ratio > max_ratio:
                     max_ratio = ratio
 
+            # check is the current ratio is in the duplicate list
             best_ratio_item = ratio_tree.__getitem__(max_ratio)
-            name, vendor_buy_price, valuation, profit_margin, ratio, quantity = best_ratio_item
+            if best_ratio_item[0]:
+                item = best_ratio_item[1].pop()
+            else:
+                item = best_ratio_item[1]
+
+            name, vendor_buy_price, valuation, profit_margin, ratio, quantity = item
             # when we can buy all of the potion. -> Potion finishes
             if money >= quantity * vendor_buy_price:
                 profit_for_day += quantity * valuation  # Money earned from sale of potion
@@ -148,7 +152,7 @@ class Game:
                 quantity = money / vendor_buy_price  # quantity of potion purchased (L)
                 profit_for_day += quantity * valuation  # money earned from sale of potion
 
-        print(f"DAY PROFIT RATIO: {profit_for_day}")
+            print(f"DAY PROFIT RATIO: {profit_for_day}")
 
             # if our money exceeds amount of available potion
             # otherwise find next available potion
