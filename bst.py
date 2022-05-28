@@ -245,7 +245,6 @@ class BinarySearchTree(Generic[K, I]):
 
     def display(self, root, val="key", left="left", right="right"):
         """Returns list of strings, width, height, and horizontal coordinate of the root."""
-        # No child.
         if getattr(root, right) is None and getattr(root, left) is None:
             line = '%s' % getattr(root, val)
             width = len(line)

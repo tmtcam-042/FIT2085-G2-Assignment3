@@ -25,7 +25,29 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
 
     def __setitem__(self, key: K, item: I) -> None:
         self.root = self.insert_aux(self.root, key, item)
-        self.root = self.rebalance(self.root)
+        #self.print_tree()
+
+    def insert_aux(self, current: AVLTreeNode, key: K, item: I) -> AVLTreeNode:
+        """
+            Attempts to insert an item into the tree, it uses the Key to insert
+            it. After insertion, performs sub-tree rotation whenever it becomes
+            unbalanced.
+            returns the new root of the subtree.
+        """
+        if current is None:  # base case: at the leaf
+            current = AVLTreeNode(key, item)
+            self.length += 1
+            return current
+        elif key < current.key:
+            current.left = self.insert_aux(current.left, key, item)
+        elif key > current.key:
+            current.right = self.insert_aux(current.right, key, item)
+        else:  # key == current.key. Duplication should cause error
+            raise ValueError('Inserting duplicate item')
+
+        # Finally, update heights rebalance current root after insertion completed (postorder processing)
+        current.height = max(self.get_height(current.left), self.get_height(current.right)) + 1
+        return self.rebalance(current)  # return new root of rebalanced tree
 
     def get_height(self, current: AVLTreeNode) -> int:
         """
@@ -49,25 +71,6 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
             return 0
         return self.get_height(current.right) - self.get_height(current.left)
 
-    def insert_aux(self, current: AVLTreeNode, key: K, item: I) -> AVLTreeNode:
-        """
-            Attempts to insert an item into the tree, it uses the Key to insert
-            it. After insertion, performs sub-tree rotation whenever it becomes
-            unbalanced.
-            returns the new root of the subtree.
-        """
-        if current is None:  # base case: at the leaf
-            current = AVLTreeNode(key, item)
-            self.length += 1
-            return current
-        elif key < current.key:
-            current.left = self.insert_aux(current.left, key, item)
-        elif key > current.key:
-            current.right = self.insert_aux(current.right, key, item)
-        else:  # key == current.key
-            raise ValueError('Inserting duplicate item')
-        return current  # return new root of rebalanced tree
-
     def delete_aux(self, current: AVLTreeNode, key: K) -> AVLTreeNode:
         """
             Attempts to delete an item from the tree, it uses the Key to
@@ -78,7 +81,7 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
         if current is None:  # key not found
             raise ValueError('Deleting non-existent item')
         elif key < current.key:
-            current.left  = self.delete_aux(current.left, key)
+            current.left = self.delete_aux(current.left, key)
         elif key > current.key:
             current.right = self.delete_aux(current.right, key)
         else:  # we found our key => do actual deletion
@@ -98,7 +101,8 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
             current.item = succ.item
             current.right = self.delete_aux(current.right, succ.key)
 
-        return self.rebalance(self.root)
+        current.height = max(self.get_height(current.left), self.get_height(current.right)) + 1
+        return self.rebalance(current)
 
     def left_rotate(self, current: AVLTreeNode) -> AVLTreeNode:
         """
@@ -173,7 +177,6 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
             return self.right_rotate(current)
 
         self.root = current
-        print("Rebalanced!")
         return current
 
     def kth_largest(self, k: int) -> AVLTreeNode:
@@ -224,3 +227,15 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
                     current = current.left
 
         return largest
+
+
+if __name__ == '__main__':
+    b = AVLTree()
+    b[15] = "A"
+    b[10] = "B"
+    b[20] = "C"
+    b[17] = "D"
+    b[5] = "E"
+    b[3] = "F"
+    b[4] = "G"
+    b[22] = "H"
