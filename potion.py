@@ -1,3 +1,5 @@
+from primes import largest_prime
+
 class Potion:
     
     def __init__(self, potion_type: str, name: str, buy_price: float, quantity: float) -> None:
@@ -15,8 +17,8 @@ class Potion:
     def good_hash(cls, potion_name: str, tablesize: int) -> int:
         """"""
         value = 0
-        a = 31415
-        b = 27183
+        a = largest_prime(52459)
+        b = largest_prime(27183)
         for char in potion_name:
             value = (ord(char) + a * value) % tablesize
         a = a * b % (tablesize - 1)
@@ -33,5 +35,5 @@ class Potion:
 if __name__ == '__main__':
     health = Potion("health", "blue barrel", 60, 4)
     hashnum = health.bad_hash("blue barrel", 3)
-    hashnum1 = health.good_hash("blue barrel", 3)
-    print(hashnum)
+    hashnum1 = health.good_hash("blue barrel", 101)
+    print(hashnum1)
