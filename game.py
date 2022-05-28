@@ -4,7 +4,7 @@ from __future__ import annotations
 from random_gen import RandomGen
 from hash_table import LinearProbePotionTable
 from potion import Potion
-from bst import BinarySearchTree
+from avl import AVLTree
 from array_list import ArrayList
 
 
@@ -13,7 +13,7 @@ class Game:
     def __init__(self, seed=0) -> None:
         self.rand = RandomGen(seed=seed)
         self.potion_table = None
-        self.inventory = BinarySearchTree()
+        self.inventory = AVLTree()
 
     def set_total_potion_data(self, potion_data: list) -> None:
         """ Hash table!
@@ -40,7 +40,7 @@ class Game:
             self.potion_table[name].quantity = amount
             potion_object = self.potion_table[name]
             self.inventory[potion_object.buy_price] = (potion_object, amount)
-        self.inventory.draw()
+        self.inventory.print_tree()
 
     def choose_potions_for_vendors(self, num_vendors: int) -> list:
         """
@@ -102,7 +102,7 @@ class Game:
         #         current_highest_margin = profit_margin
         #         cheapest_potion.append(key)
 
-        ratio_tree = BinarySearchTree()
+        ratio_tree = AVLTree()
         # ratio_tree = ArrayList(len(potion_valuations))
         for i in range(len(potion_valuations)):
             duplicates_list = []
