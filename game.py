@@ -37,6 +37,7 @@ class Game:
         """
         for potion in potion_name_amount_pairs:
             name, amount = potion
+            self.potion_table[name].quantity = amount
             potion_object = self.potion_table[name]
             self.inventory[potion_object.buy_price] = (potion_object, amount)
         self.inventory.draw()
@@ -56,7 +57,7 @@ class Game:
                 if p == j + 1:
                     node = self.inventory.get_tree_node_by_key(key).item
                     name, amount = node[0].name, node[1]
-                    self.potion_table[name].quantity = amount
+                    # self.potion_table[name].quantity = amount
                     vendor_potion_list.append((name, amount))
                     del self.inventory[key]
                     break
@@ -101,11 +102,12 @@ class Game:
         #         current_highest_margin = profit_margin
         #         cheapest_potion.append(key)
 
-        profit_ratio = BinarySearchTree()
-
-        # profit_ratio = ArrayList(len(potion_valuations))
+        ratio_tree = BinarySearchTree()
+        # ratio_tree = ArrayList(len(potion_valuations))
         for i in range(len(potion_valuations)):
+            duplicates_list = []
             name, valuation = potion_valuations[i]
+            # print(f"Name: {name}")
             vendor_buy_price = self.potion_table[name].buy_price
             profit_margin = valuation - vendor_buy_price
             ratio = profit_margin / vendor_buy_price
@@ -115,37 +117,43 @@ class Game:
 
             # assuming normal potions
             # TODO: THIS IS BAD SORTING
-            profit_ratio[ratio + vendor_buy_price] = (name, vendor_buy_price, valuation, profit_margin, ratio, quantity)
+            if not ratio_tree.__contains__(ratio):
+                ratio_tree[ratio] = (name, vendor_buy_price, valuation, profit_margin, ratio, quantity)
+            else:
+                duplicate = ratio_tree[ratio]
+                duplicates_list.append(ratio)
+                del ratio_tree[ratio]
+                dup_binary = ArrayList(5)
+                dup_binary.append(duplicate)
+                dup_binary.append((name, vendor_buy_price, valuation, profit_margin, ratio, quantity))
+                ratio_tree[ratio] = dup_binary
 
         for money in starting_money:
+            profit_for_day = 0
             max_ratio = 0
-            for ratio in profit_ratio:
+            for ratio in ratio_tree:
                 if ratio > max_ratio:
                     max_ratio = ratio
 
-            profit_for_day = 0
-            while profit_ratio.root is not None and money > 0:
-                best_ratio_item = profit_ratio.get_minimal(profit_ratio.root)
-                name, vendor_buy_price, valuation, profit_margin, ratio, quantity = best_ratio_item.item
+            best_ratio_item = ratio_tree.__getitem__(max_ratio)
+            name, vendor_buy_price, valuation, profit_margin, ratio, quantity = best_ratio_item
+            # when we can buy all of the potion. -> Potion finishes
+            if money >= quantity * vendor_buy_price:
+                profit_for_day += quantity * valuation  # Money earned from sale of potion
+                money -= quantity * vendor_buy_price  # Available money is reduced
+                del ratio_tree[max_ratio] # Remove potion from tree so it can't be repurchased
+            else:
+                # we spend all our money buying the potions
+                # (which is available in sufficient quantity) -> Money Finishes
+                quantity = money / vendor_buy_price  # quantity of potion purchased (L)
+                profit_for_day += quantity * valuation  # money earned from sale of potion
 
-                # when we can buy all of the potion. -> Potion finishes
-                if money >= quantity * vendor_buy_price:
-                    profit_for_day += quantity * valuation  # Money earned from sale of potion
-                    money -= quantity * vendor_buy_price  # Available money is reduced
-                    del profit_ratio[best_ratio_item.key]  # Remove potion from tree so it can't be repurchased
-                else:
-                    # we spend all our money buying the potions
-                    # (which is available in sufficient quantity) -> Money Finishes
-                    quantity = money / vendor_buy_price  # quantity of potion purchased (L)
-                    profit_for_day += quantity * valuation  # money earned from sale of potion
-                    break
-
-            print(f"DAY PROFIT RATIO: {profit_for_day}")
+        print(f"DAY PROFIT RATIO: {profit_for_day}")
 
             # if our money exceeds amount of available potion
             # otherwise find next available potion
 
-        #     index_of_max_ratio = profit_ratio.index(max_ratio)
+        #     index_of_max_ratio = ratio_tree.index(max_ratio)
         #     potion_details = potion_valuations[index_of_max_ratio]
         #     name = self.potion_table[potion_details[0]].name
         #     quantity = self.potion_table[potion_details[0]].quantity

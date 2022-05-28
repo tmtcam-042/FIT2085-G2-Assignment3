@@ -211,6 +211,7 @@ class BinarySearchTree(Generic[K, I]):
             else:
                 current = current.left
 
+
     def is_leaf(self, current: TreeNode) -> bool:
         """ Simple check whether or not the node is a leaf. """
 
