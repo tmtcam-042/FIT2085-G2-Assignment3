@@ -127,23 +127,27 @@ class Game:
                 ratio_tree[ratio] = tree_stack
 
         for money in starting_money: # O(M)
+            visited_items = []
             profit_for_day = 0
             while money > 0:
                 max_ratio = 0
                 for ratio in ratio_tree: # O(N)
-                    if ratio > max_ratio:
-                        max_ratio = ratio
+                    if ratio_tree[ratio].peek() not in visited_items:
+                         if ratio > max_ratio:
+                            max_ratio = ratio
 
                 # check is the current ratio is in the duplicate list
                 best_ratio_item = ratio_tree[max_ratio]
-                item = best_ratio_item.pop()
+                item = best_ratio_item.peek()
                 name, vendor_buy_price, valuation, profit_margin, ratio, quantity = item
                 # when we can buy all of the potion. -> Potion finishes
                 if money >= quantity * vendor_buy_price:
                     profit_for_day += quantity * valuation  # Money earned from sale of potion
                     money -= quantity * vendor_buy_price # Available money is reduced
-                    if best_ratio_item.is_empty():
-                        del ratio_tree[max_ratio]
+                    visited_items.append(item)
+                    #  if best_ratio_item.is_empty():
+                        #  del ratio_tree[max_ratio]
+
                 else:
                     # we spend all our money buying the potions
                     # (which is available in sufficient quantity) -> Money Finishes
