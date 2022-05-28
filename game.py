@@ -39,8 +39,8 @@ class Game:
         """
         for potion in potion_name_amount_pairs:
             name, amount = potion
+            self.potion_table[name].quantity = amount
             potion_object = self.potion_table[name]
-            potion_object.quantity = amount
             self.inventory[potion_object.buy_price] = (potion_object, amount)
         self.inventory.print_tree()
 
@@ -59,7 +59,7 @@ class Game:
                 if p == j + 1:
                     node = self.inventory.get_tree_node_by_key(key).item
                     name, amount = node[0].name, node[1]
-                    self.potion_table[name].quantity = amount
+                    # self.potion_table[name].quantity = amount
                     vendor_potion_list.append((name, amount))
                     del self.inventory[key]
                     break
@@ -137,22 +137,19 @@ class Game:
 
                 # check is the current ratio is in the duplicate list
                 best_ratio_item = ratio_tree.__getitem__(max_ratio)
-                item = best_ratio_item.pop()
+                item = best_ratio_item.peek()
                 name, vendor_buy_price, valuation, profit_margin, ratio, quantity = item
                 # when we can buy all of the potion. -> Potion finishes
                 if money >= quantity * vendor_buy_price:
+                    best_ratio_item.pop()
                     profit_for_day += quantity * valuation  # Money earned from sale of potion
                     money -= quantity * vendor_buy_price # Available money is reduced
-                    if best_ratio_item.is_empty():
-                        del ratio_tree[max_ratio] # Remove potion from tree so it can't be repurchased
                 else:
                     # we spend all our money buying the potions
                     # (which is available in sufficient quantity) -> Money Finishes
                     new_quantity = money / vendor_buy_price  # quantity of potion purchased (L)
                     profit_for_day += new_quantity * valuation # money earned from sale of potion
-                    money -= quantity * vendor_buy_price
-                    if best_ratio_item.is_empty():
-                        del ratio_tree[max_ratio]
+                    money = 0
 
             print(f"DAY PROFIT RATIO: {profit_for_day}")
 
