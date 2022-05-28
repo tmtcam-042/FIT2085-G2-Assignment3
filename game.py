@@ -39,8 +39,8 @@ class Game:
         """
         for potion in potion_name_amount_pairs:
             name, amount = potion
-            self.potion_table[name].quantity = amount
             potion_object = self.potion_table[name]
+            potion_object.quantity = amount
             self.inventory[potion_object.buy_price] = (potion_object, amount)
         self.inventory.draw()
 
@@ -59,7 +59,7 @@ class Game:
                 if p == j + 1:
                     node = self.inventory.get_tree_node_by_key(key).item
                     name, amount = node[0].name, node[1]
-                    # self.potion_table[name].quantity = amount
+                    self.potion_table[name].quantity = amount
                     vendor_potion_list.append((name, amount))
                     del self.inventory[key]
                     break

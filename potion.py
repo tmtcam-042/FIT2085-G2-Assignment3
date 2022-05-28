@@ -34,4 +34,4 @@ if __name__ == '__main__':
     health = Potion("health", "blue barrel", 60, 4)
     hashnum = health.bad_hash("blue barrel", 3)
     hashnum1 = health.good_hash("blue barrel", 3)
-    print(hashnum1)
+    print(hashnum)
