@@ -27,6 +27,28 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
         self.root = self.insert_aux(self.root, key, item)
         self.root = self.rebalance(self.root)
 
+    def insert_aux(self, current: AVLTreeNode, key: K, item: I) -> AVLTreeNode:
+        """
+            Attempts to insert an item into the tree, it uses the Key to insert
+            it. After insertion, performs sub-tree rotation whenever it becomes
+            unbalanced.
+            returns the new root of the subtree.
+        """
+        if current is None:  # base case: at the leaf
+            current = AVLTreeNode(key, item)
+            self.length += 1
+            return current
+        elif key < current.key:
+            current.left = self.insert_aux(current.left, key, item)
+        elif key > current.key:
+            current.right = self.insert_aux(current.right, key, item)
+        else:  # key == current.key
+            raise ValueError('Inserting duplicate item')
+
+        # Finally, update heights and balance factors of current root after insertion completed (postorder processing)
+        current.height = max(self.get_height(current.left), self.get_height(current.right) + 1
+        return self.rebalance(current)  # return new root of rebalanced tree
+
     def get_height(self, current: AVLTreeNode) -> int:
         """
             Get the height of a node. Return current.height if current is 
@@ -48,25 +70,6 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
         if current is None:
             return 0
         return self.get_height(current.right) - self.get_height(current.left)
-
-    def insert_aux(self, current: AVLTreeNode, key: K, item: I) -> AVLTreeNode:
-        """
-            Attempts to insert an item into the tree, it uses the Key to insert
-            it. After insertion, performs sub-tree rotation whenever it becomes
-            unbalanced.
-            returns the new root of the subtree.
-        """
-        if current is None:  # base case: at the leaf
-            current = AVLTreeNode(key, item)
-            self.length += 1
-            return current
-        elif key < current.key:
-            current.left = self.insert_aux(current.left, key, item)
-        elif key > current.key:
-            current.right = self.insert_aux(current.right, key, item)
-        else:  # key == current.key
-            raise ValueError('Inserting duplicate item')
-        return current  # return new root of rebalanced tree
 
     def delete_aux(self, current: AVLTreeNode, key: K) -> AVLTreeNode:
         """
