@@ -25,7 +25,7 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
 
     def __setitem__(self, key: K, item: I) -> None:
         self.root = self.insert_aux(self.root, key, item)
-        self.print_tree()
+        #self.print_tree()
 
     def insert_aux(self, current: AVLTreeNode, key: K, item: I) -> AVLTreeNode:
         """
@@ -81,7 +81,7 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
         if current is None:  # key not found
             raise ValueError('Deleting non-existent item')
         elif key < current.key:
-            current.left  = self.delete_aux(current.left, key)
+            current.left = self.delete_aux(current.left, key)
         elif key > current.key:
             current.right = self.delete_aux(current.right, key)
         else:  # we found our key => do actual deletion
@@ -101,7 +101,8 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
             current.item = succ.item
             current.right = self.delete_aux(current.right, succ.key)
 
-        return self.rebalance(self.root)
+        current.height = max(self.get_height(current.left), self.get_height(current.right)) + 1
+        return self.rebalance(current)
 
     def left_rotate(self, current: AVLTreeNode) -> AVLTreeNode:
         """
@@ -176,7 +177,6 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
             return self.right_rotate(current)
 
         self.root = current
-        print("Rebalanced!")
         return current
 
     def kth_largest(self, k: int) -> AVLTreeNode:
