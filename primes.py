@@ -8,7 +8,7 @@ def largest_prime(k: int) -> int:
     return all i such that A[i] is true.
     """
 
-    primes_list = [True for i in range(k + 1)]
+    primes_list = [True for i in range(k)]
     p = 2
 
     while p * p <= k:
@@ -17,7 +17,7 @@ def largest_prime(k: int) -> int:
         if primes_list[p]:
 
             # Update all multiples of p
-            for i in range(p ** 2, k + 1, p):
+            for i in range(p ** 2, k, p):
                 primes_list[i] = False
 
         p += 1
