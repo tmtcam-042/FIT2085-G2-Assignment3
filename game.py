@@ -107,7 +107,6 @@ class Game:
         ratio_tree = AVLTree()
         # ratio_tree = ArrayList(len(potion_valuations))
         for i in range(len(potion_valuations)): # O(N)
-            duplicates = LinkedStack()
             name, valuation = potion_valuations[i]
             # print(f"Name: {name}")
             vendor_buy_price = self.potion_table[name].buy_price
@@ -117,7 +116,7 @@ class Game:
             print(f"Quantity: {quantity}")
 
             # assuming normal potions
-            if not ratio_tree.__contains__(ratio):
+            if ratio not in ratio_tree:
                 tree_stack = LinkedStack()
                 tree_stack.push((name, vendor_buy_price, valuation, profit_margin, ratio, quantity))
                 ratio_tree[ratio] = tree_stack
@@ -131,19 +130,20 @@ class Game:
             profit_for_day = 0
             while money > 0:
                 max_ratio = 0
-                for ratio in ratio_tree: # O(Log(N))
+                for ratio in ratio_tree: # O(N)
                     if ratio > max_ratio:
                         max_ratio = ratio
 
                 # check is the current ratio is in the duplicate list
-                best_ratio_item = ratio_tree.__getitem__(max_ratio)
-                item = best_ratio_item.peek()
+                best_ratio_item = ratio_tree[max_ratio]
+                item = best_ratio_item.pop()
                 name, vendor_buy_price, valuation, profit_margin, ratio, quantity = item
                 # when we can buy all of the potion. -> Potion finishes
                 if money >= quantity * vendor_buy_price:
-                    best_ratio_item.pop()
                     profit_for_day += quantity * valuation  # Money earned from sale of potion
                     money -= quantity * vendor_buy_price # Available money is reduced
+                    if best_ratio_item.is_empty():
+                        del ratio_tree[max_ratio]
                 else:
                     # we spend all our money buying the potions
                     # (which is available in sufficient quantity) -> Money Finishes
