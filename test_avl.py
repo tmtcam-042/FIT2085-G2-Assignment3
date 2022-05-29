@@ -14,7 +14,7 @@ class TestAVL(unittest.TestCase):
         self.b[3] = "F"
         self.b[4] = "G"
         self.b[22] = "H"
-        self.b.print_tree()
+        self.b.draw()
         """
         15
         ╟─5
@@ -34,7 +34,7 @@ class TestAVL(unittest.TestCase):
         del self.b[20]
         del self.b[17]
         
-        self.b.print_tree()
+        self.b.draw()
         """
         5
         ╟─3

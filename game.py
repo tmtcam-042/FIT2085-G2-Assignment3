@@ -62,9 +62,7 @@ class Game:
         """
         Add litres of potion into the current inventory of the vendor company. Takes a list
         of tuples containing names of potion and a float representing litres to add to the inventory.
-        :raises ValueError: if current is None, raises Subtree is empty
-        :complexity: Best O(1) if subtree is empty, worst O(log N) where N is the height
-                        of current.
+        :complexity: Best and worst O(N), where N is the length of potion_name_amount_pairs
         """
         for potion in potion_name_amount_pairs:
             name, amount = potion

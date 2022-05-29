@@ -45,6 +45,6 @@ full_vendor_info = [
 ]
 
 # Play the game with 3 attempts, at different starting money.
-results = G.solve_game(full_vendor_info, [12.5, 45, 8000])
+results = G.solve_game(full_vendor_info, [12.5, 45, 80])
 print(results)
 # >>> [37.5, 90, 142.5]
