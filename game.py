@@ -172,7 +172,7 @@ class Game:
 
         """
             Iterates through the money values for each day and calculates the money remaining 
-            at the end of each iteration(day)
+            at the end of each iteration(day). Prints each transaction as the day progresses
             :pre: the tree must exist and its root must not be None
             :raises Exception: if the tree does not exist
             :pre: there must be integer values in starting_money list
@@ -185,14 +185,14 @@ class Game:
             print(f"Error: {type(e)}: {e}")
             return day_profits
 
-        for money in starting_money:    # Loop Time complexity: O(M)
+        for money in starting_money:
 
             checked = []
             temp_stack = LinkedStack()
             final_money = 0
-            print(f"\nStaring Day Money: {money}")
+            print(f"\nStarting Day Money: {money}")
 
-            while money > 0 and len(checked) <= len(ratio_tree):
+            while money > 0 and len(checked) < len(ratio_tree):
                 max_ratio = ratio_tree.get_minimal(ratio_tree.root).key
                 # loops through the ratio tree for the maximum ratio and extracts it from the tree
                 for ratio in ratio_tree:
@@ -233,6 +233,8 @@ class Game:
                     money -= quantity * vendor_buy_price
                     print(f"Money left: {money}")
                 else:
+                    if best_ratio_item[0]:
+                        original_stack.push(item)
                     new_quantity = money / vendor_buy_price
                     print(f"Went broke buying: {new_quantity}L for ${vendor_buy_price} each\n")
                     final_money += new_quantity * valuation
