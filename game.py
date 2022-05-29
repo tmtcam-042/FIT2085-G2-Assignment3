@@ -19,7 +19,20 @@ Linked Stack(tree_stack) -  This stores any duplicates of the same ratio within 
     affecting the time complexity of having to iterate through a list or array.
 """
 class Game:
+    """
+    REASON FOR USED ADTs
+        potion_table : Hash Table
+            Hash tables, have a search time complexity of O(1) i.e constant in the
+            best case and O(n) in the worst case (if implemented properly, it will
+            usually always be constant). To minimise our searching time, we have
+            chosen a hash table for potion_table
 
+        inventory : AVL Tree
+            AVL tree has a search, deletion, and insertion time complexity of
+            O(log(N)) in the worst and O(1) in the best case, when the tree is empty.
+            To match our required time complexity for the all the used operations (when
+            finding the correct potion), we decided to go with the AVL tree.
+    """
     def __init__(self, seed=0) -> None:
         self.rand = RandomGen(seed=seed)
         self.potion_table = None
@@ -50,9 +63,13 @@ class Game:
             potion_object = self.potion_table[name]
             self.inventory[potion_object.buy_price] = (potion_object, amount)
 
-    def choose_potions_for_vendors(self, num_vendors: int) -> list:
+    def choose_potions_for_vendors(self, num_vendors: int) -> list[tuple[str, float]]:
         """
-
+        This method completes the vendor potion selection process and returns a list
+        of potion names along with their quantity in inventory
+        :param num_vendors: int
+        :pre: num_vendors > 0
+        :return: list of tuples [(name_of_potion, quantity)]
         """
         # self.inventory.print_tree()
         vendor_potion_list = []
@@ -60,7 +77,7 @@ class Game:
         # saved_inventory = self.inventory
         for i in range(num_vendors):
             p = self.rand.randint(len(self.inventory))
-
+            # O(log(N)) -> N is the number of items in inventory
             for j, key in enumerate(self.inventory):
                 # p starts from 1 - k, hence we add 1 to j
                 if p == j + 1:
@@ -83,14 +100,9 @@ class Game:
                            by the adventurers
         :param arg2: starting_money: is a list containing, for each attempt, the starting allowance the player has.
 
-        :complexity best case: 𝐎(𝑁 + 𝑀) - where the O(N) is the n length of
-            the potion_valuation that is being iterated through. The best case
-            complexity for insertion and searcg a binary search tree is O(1)
-            where the tree is empty or the searching key is at the tree root.
-        :complexity worst case: 𝐎(𝑁 x log(N) + 𝑀 × N) - the O(N) for the n length of potion_valuation remains
-            the same but the insertion into the BST becomes log(N) where the tree is balanced and sorted
-            so the given key can be found by comparing keys. This is the same complexity for searching
-            where the tree is sorted and balanced
+        :complexity best case: 𝐎(𝑁 × log(𝑁) + 𝑀 × log(N))
+        :complexity worst case: 𝐎(𝑁^2 + 𝑀 × N)
+        :average complexity: 𝐎(𝑁 × log(𝑁) + 𝑀 × 𝑁)
         """
 
         day_profits = []
@@ -100,12 +112,12 @@ class Game:
         This for loop goes through each potion_valuation and creates the binary tree.
         :pre: this list of potion_valuation must contain 1 or more elements
         :raises ValueError: if the list is empty
-        
-        This solution requires for each value of the potion_valuation have a profit 
-        ratio calculated. This is then used as its key to be inserted into a sorted 
-        AVL tree as a tuple with a boolean value. To solve the issue of duplicates, 
-        if the tree contains the key already, it simply changes the boolean in the 
-        tuple to True and creates a stack to store each potion with the same key.
+        :complexity best: O(N) x O(log(N)) - where the O(N) is the n length of 
+        the potion_valuation that is being iterated through. The best case 
+        complexity for insertion in a BST is log(N) where the tree is balanced
+        :complexity worst: O(N^2) - the O(N) for the n length of potion_valuation remains
+        the same but the insertion
+        :average complexity: O(N) x O(log(N))
         """
         for i in range(len(potion_valuations)):
 
@@ -136,6 +148,9 @@ class Game:
             :raises Exception: if the tree does not exist
             :pre: there must be integer values in starting_money list
             :raises Exception: if the list has not been defined
+            :complexity best: O(M) x O(log(N))
+            :complexity worst: O(M) x O(N)
+            :average complexity: O(M) x O(N)
         """
         for money in starting_money:    # Loop Time complexity: O(M)
 
