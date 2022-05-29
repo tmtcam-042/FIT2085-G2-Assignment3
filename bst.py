@@ -248,3 +248,4 @@ class BinarySearchTree(Generic[K, I]):
         else:
             real_prefix = prefix[:-2] + final
             print('{0}'.format(real_prefix), file=to)
+
