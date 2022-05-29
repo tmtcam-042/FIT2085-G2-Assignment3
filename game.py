@@ -3,8 +3,6 @@ from random_gen import RandomGen
 from hash_table import LinearProbePotionTable
 from potion import Potion
 from avl import AVLTree
-from array_list import ArrayList
-from stack_adt import Stack
 
 
 
@@ -98,6 +96,7 @@ class Game:
         for money in starting_money: # O(M)
             checked = []
             dup_checker = []
+            current_stack = None
             profit_for_day = 0
             while money > 0:
                 max_ratio = 0
@@ -107,19 +106,21 @@ class Game:
 
                 # check is the current ratio is in the duplicate list
                 best_ratio_item = ratio_tree[max_ratio]
-                if best_ratio_item[0]:
-                    stack_item = best_ratio_item[1]
-                    check_item = stack_item.peek()
-                    if check_item[0] not in dup_checker:
-                        item = stack_item.peek()
+                if best_ratio_item[0]: # checks is the stack is True (duplicate)
+                    whole_stack = best_ratio_item[1]  # put the stack into variable
+                    check_item = whole_stack.peek() # peek at the first element of the stack
+                    if check_item[0] not in dup_checker: # checks if that element has already been visited
+                        item = whole_stack.peek() # if no then item is now
                         dup_checker.append(item[0])
-                    else:
-                        temp_item = stack_item.pop()
-                        item = stack_item.peek()
-                        stack_item.push(temp_item)
+                    elif check_item[0] in dup_checker:
+                        temp_item = whole_stack.pop()
+                        item = whole_stack.peek()
+                        whole_stack.push(temp_item)
+                        dup_checker.append(item[0])
                 else:
                     checked.append(max_ratio)
                     item = best_ratio_item[1]
+
                 print(item)
                 name, vendor_buy_price, valuation, profit_margin, ratio, quantity = item
                 # when we can buy all of the potion. -> Potion finishes
