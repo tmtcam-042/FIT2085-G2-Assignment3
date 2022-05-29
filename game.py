@@ -6,7 +6,20 @@ from avl import AVLTree
 
 
 class Game:
+    """
+    REASON FOR USED ADTs
+        potion_table : Hash Table
+            Hash tables, have a search time complexity of O(1) i.e constant in the
+            best case and O(n) in the worst case (if implemented properly, it will
+            usually always be constant). To minimise our searching time, we have
+            chosen a hash table for potion_table
 
+        inventory : AVL Tree
+            AVL tree has a search, deletion, and insertion time complexity of
+            O(log(N)) in the worst and O(1) in the best case, when the tree is empty.
+            To match our required time complexity for the all the used operations (when
+            finding the correct potion), we decided to go with the AVL tree.
+    """
     def __init__(self, seed=0) -> None:
         self.rand = RandomGen(seed=seed)
         self.potion_table = None
