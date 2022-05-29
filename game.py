@@ -56,10 +56,21 @@ class Game:
 
     def add_potions_to_inventory(self, potion_name_amount_pairs: list[tuple[str, float]]) -> None:
         """
-        Binary tree!
-        :param potion_name_amount_pairs:
-        :return:
-        :complexity: worst case = constant comparison * depth
+        Uses the starting money to buy and sell potions for the amount of money left at the
+        end of each played day.
+
+        :param arg1: potion_valuations: is a list of potions that each vendor is selling, paired with its valuation
+                           by the adventurers
+        :param arg2: starting_money: is a list containing, for each attempt, the starting allowance the player has.
+
+        :complexity best case: 𝐎(𝑁 + 𝑀) - where the O(N) is the n length of
+            the potion_valuation that is being iterated through. The best case
+            complexity for insertion and searcg a binary search tree is O(1)
+            where the tree is empty or the searching key is at the tree root.
+        :complexity worst case: 𝐎(𝑁 x log(N) + 𝑀 × N) - the O(N) for the n length of potion_valuation remains
+            the same but the insertion into the BST becomes log(N) where the tree is balanced and sorted
+            so the given key can be found by comparing keys. This is the same complexity for searching
+            where the tree is sorted and balanced
         """
         for potion in potion_name_amount_pairs:
             name, amount = potion
@@ -78,7 +89,6 @@ class Game:
         # self.inventory.print_tree()
         vendor_potion_list = []
         checked = [0]
-        inventory_len = len(self.inventory)
         # saved_inventory = self.inventory
         for i in range(num_vendors):
             p = 0
@@ -108,6 +118,8 @@ class Game:
         :param arg1: potion_valuations: is a list of potions that each vendor is selling, paired with its valuation
                            by the adventurers
         :param arg2: starting_money: is a list containing, for each attempt, the starting allowance the player has.
+        :pre: potion_valuations is not empty, and is a list of tuple[str, float], starting money is a list of ints
+        :raises ValueError: if potion_valuations is empty
 
         :complexity best case: 𝐎(𝑁 + 𝑀) - where the O(N) is the n length of
             the potion_valuation that is being iterated through. The best case
@@ -121,7 +133,14 @@ class Game:
 
         day_profits = []
         ratio_tree = AVLTree()
-
+        try:
+            if len(potion_valuations) == 0:
+                raise ValueError(f"List has length: {len(potion_valuations)}")
+            if len(starting_money) == 0:
+                raise ValueError("List has length 0")
+        except Exception as e:
+            print(f"Error: {type(e)}: {e}")
+            return day_profits
         """
         This for loop goes through each potion_valuation and creates the binary tree.
         
@@ -134,8 +153,7 @@ class Game:
         if the tree contains the key already, it simply changes the boolean in the 
         tuple to True and creates a stack to store each potion with the same key.
         """
-        if len(potion_valuations) == 0:
-            raise ValueError(f"List has length: {len(potion_valuations)}")
+
 
         for i in range(len(potion_valuations)):
 
@@ -163,10 +181,12 @@ class Game:
             :pre: there must be integer values in starting_money list
             :raises Exception: if the list has not been defined
         """
-        if ratio_tree.root is None:
-            raise TypeError("Ratio tree does not exist")
-        elif len(starting_money) == 0:
-            raise ValueError("List has length 0")
+        try:
+            if ratio_tree.root is None:
+                raise TypeError("Ratio tree does not exist")
+        except Exception as e:
+            print(f"Error: {type(e)}: {e}")
+            return day_profits
 
         for money in starting_money:    # Loop Time complexity: O(M)
 
