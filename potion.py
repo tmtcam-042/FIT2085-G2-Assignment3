@@ -8,7 +8,7 @@ class Potion:
 
     @classmethod
     def create_empty(cls, potion_type: str, name: str, buy_price: float) -> 'Potion':
-        """"""
+        """ """
         return Potion(potion_type, name, buy_price, 0)
 
     @classmethod

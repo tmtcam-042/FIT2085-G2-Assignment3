@@ -38,7 +38,7 @@ class BSTInOrderIterator:
 
     def __next__(self) -> K:
         """ The main body of the iterator.
-            Returns keys of the BST one by one respecting the in-order.
+        Returns keys of the BST one by one respecting the in-order.
         """
 
         while self.current:
