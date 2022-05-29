@@ -9,16 +9,19 @@ def lcg(modulus: int, a: int, c: int, seed: int) -> Generator[int, None, None]:
 
 
 class RandomGen:
-
+    """
+    Class that returns a randomly generated number
+    """
     def __init__(self, seed: int = 0) -> None:
         self.seed = seed
         self.randgen = lcg(pow(2, 32), 134775813, 1, seed)
 
     def randint(self, k: int) -> int:
         """
-
+        returns a random integer
         :param k: positive non-zero integer
         :return: random number in range (1,k) inclusive
+        :complexity: O(N) where N is the length of the randlist
         """
         if k == 0:
             return 0
@@ -44,7 +47,3 @@ class RandomGen:
         new_num = int("".join(new_num), 2)
         output = (new_num % k) + 1
         return output
-
-if __name__ == "__main__":
-    g = RandomGen()
-    print(g.randint(100))

@@ -16,6 +16,7 @@ class Potion:
     def create_empty(cls, potion_type: str, name: str, buy_price: float) -> 'Potion':
         """ Creates a potion with corresponding potion type,name and buy price and
         initialises the quantity of it to 0
+        :complexity: O(1) where returning a tuple is constant
         """
         return Potion(potion_type, name, buy_price, 0)
 
@@ -24,6 +25,7 @@ class Potion:
         """
         Method that hashes a position for a given string and tablesize. This uses
         a universal hash method to prevent collisions and conflicts
+        :complexity: O(1) where char is the first letter of the string
         """
         value = 0
         a = largest_prime(52459)
@@ -38,15 +40,8 @@ class Potion:
         """
         Method that hashes a position for a given string and tablesize. This uses
         a bad hash method to hash a key where lots of collisions and conflicts can occur.
+        :complexity: O(1) where the first letter of the string is constant
         """
         return ord(potion_name[0]) % tablesize
 
-    def get_name(self) -> str:
-        return self.name
 
-
-if __name__ == '__main__':
-    health = Potion("health", "blue barrel", 60, 4)
-    hashnum = health.bad_hash("blue barrel", 3)
-    hashnum1 = health.good_hash("blue barrel", 162)
-    print(hashnum1)

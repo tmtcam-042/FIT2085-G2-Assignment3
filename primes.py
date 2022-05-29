@@ -35,7 +35,3 @@ def largest_prime(k: int) -> int:
 
     except Exception as e:
         print(f"Error {type(e)}: {e}")
-
-
-if __name__ == "__main__":
-    print(largest_prime(47))
