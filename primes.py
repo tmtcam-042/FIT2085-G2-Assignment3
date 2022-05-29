@@ -33,7 +33,7 @@ def largest_prime(k: int) -> int:
         # Print all prime numbers
         return max([i for i, b in enumerate(primes_list) if b])
 
-    except (ValueError, TypeError) as e:
+    except Exception as e:
         print(f"Error {type(e)}: {e}")
 
 
