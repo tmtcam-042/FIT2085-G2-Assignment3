@@ -163,12 +163,12 @@ class Game:
             :pre: there must be integer values in starting_money list
             :raises Exception: if the list has not been defined
         """
-        for money in starting_money:    # Loop Time complexity: O(M)
+        if ratio_tree.root is None:
+            raise TypeError("Ratio tree does not exist")
+        elif len(starting_money) == 0:
+            raise ValueError("List has length 0")
 
-            if ratio_tree.root is None:
-                raise TypeError("Ratio tree does not exist")
-            elif len(starting_money) == 0:
-                raise ValueError("List has length 0")
+        for money in starting_money:    # Loop Time complexity: O(M)
 
             checked = []
             temp_stack = LinkedStack()
