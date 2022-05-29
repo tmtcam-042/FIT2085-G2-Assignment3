@@ -14,7 +14,7 @@ class TestBST(unittest.TestCase):
         self.b[3] = "F"
         self.b[4] = "G"
         self.b[22] = "H"
-        self.b.print_tree()
+        self.b.draw()
         """
         15
         ╟─10

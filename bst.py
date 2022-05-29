@@ -38,7 +38,7 @@ class BSTInOrderIterator:
 
     def __next__(self) -> K:
         """ The main body of the iterator.
-            Returns keys of the BST one by one respecting the in-order.
+        Returns keys of the BST one by one respecting the in-order.
         """
 
         while self.current:
@@ -73,10 +73,7 @@ class BinarySearchTree(Generic[K, I]):
         return self.root is None
 
     def __len__(self) -> int:
-        """
-            Returns the number of nodes in the tree.
-            :complexity: O(1)
-        """
+        """ Returns the number of nodes in the tree. """
         return self.length
 
     def __contains__(self, key: K) -> bool:
@@ -185,35 +182,26 @@ class BinarySearchTree(Generic[K, I]):
 
     def get_successor(self, current: TreeNode) -> TreeNode:
         """
-        Get successor of the current node.
-        It should be a child node having the smallest key among all the
-        larger keys in the subtree of the current node
-        :pre: current is a valid TreeNode in a left -> right key sorted binary tree
-        :post: Tree is not changed, returns None if no successor
-        :raises ValueError: if current is None
-        :complexity: Best O(1) when current has no successor, worst O(log(N)) where
-                        N is the height of current, see self.get_minimal(current)
-        """
+            Get successor of the current node.
+            It should be a child node having the smallest key among all the
+            larger keys.
 
+        """
         if current is None:  # base case: empty
             raise ValueError("Current node is empty")
 
         # If right subtree of current is not None, then successor is minimum key value of right subtree.
         if current.right is not None:
             return self.get_minimal(current.right)
-        else:  # current node is the largest node in the subtree if it has no right branch
+        else: # current node is the largest node in the subtree if it has no right branch
             return None
 
     def get_minimal(self, current: TreeNode) -> TreeNode:
         """
-        Get a node having the smallest key in the current sub-tree.
-        Traverse from root of sub-tree to left recursively until left is None.
-        The node whose left is None is the node with minimum value.
-        :pre: Current roots a sorted binary tree or sub-tree
-        :post: Tree is not changed
-        :raises ValueError: if current is None, raises Subtree is empty
-        :complexity: Best O(1) if subtree is empty, worst O(log N) where N is the height
-                        of current.
+            Get a node having the smallest key in the current sub-tree.
+            Traverse from root of sub-tree to left recursively until left is None
+            The node whose left is None is the node with minimum value.
+            :pre: binary tree is sorted
         """
         if current is None:  # base case: at the leaf
             raise ValueError('Subtree is empty')
@@ -250,7 +238,6 @@ class BinarySearchTree(Generic[K, I]):
             print('{0}'.format(real_prefix), file=to)
 
     def print_tree(self, val="key", left="left", right="right"):
-        # TODO: DELETE THIS AND DISPLAY
         try:
             lines, *_ = self.display(self.root, val, left, right)
             print("\n")
