@@ -38,16 +38,22 @@ class Game:
             self.inventory[potion_object.buy_price] = (potion_object, amount)
         self.inventory.print_tree()
 
-    def choose_potions_for_vendors(self, num_vendors: int) -> list:
+    def choose_potions_for_vendors(self, num_vendors: int) -> list[tuple[str, float]]:
         """
-
+        This method completes the vendor potion selection process and returns a list
+        of potion names along with their quantity in inventory
+        :param num_vendors: int
+        :pre: num_vendors > 0
+        :return: list of tuples [(name_of_potion, quantity)]
         """
         self.inventory.print_tree()
         vendor_potion_list = []
         saved_inventory = self.inventory
+
+        # O(C) -> C is the number of vendors
         for i in range(num_vendors):
             p = self.rand.randint(len(self.inventory))
-
+            # O(log(N)) -> N is the number of items in inventory
             for j, key in enumerate(self.inventory):
                 # p starts from 1 - k, hence we add 1 to j
                 if p == j + 1:
