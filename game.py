@@ -43,10 +43,15 @@ class Game:
         self.inventory = AVLTree()
 
     def set_total_potion_data(self, potion_data: list) -> None:
-        """ Hash table!
+        """
+        Accepts a list containing potion data and creates empty potion objects
+        using that data and adds it to a hash table
 
-        :param potion_data:
+        :param potion_data: list of potion data ["Potion of Health Regeneration", "Health", 20]
         :pre: List has to be correct, is not empty
+        :complexity: O(N) -> N is the length of potion data
+                     adding items to a hash table is O(1)
+        :return: None
         """
         self.potion_table = LinearProbePotionTable(len(potion_data))
         for potion in potion_data:
@@ -73,22 +78,26 @@ class Game:
         of potion names along with their quantity in inventory
         :param num_vendors: int
         :pre: num_vendors > 0
+        :required complexity: O(C x log(N))
+        :achieved complexity: O(C x log(N))
         :return: list of tuples [(name_of_potion, quantity)]
         """
         # self.inventory.print_tree()
         vendor_potion_list = []
         checked = [0]
         # saved_inventory = self.inventory
+        # O(C) -> C is the number of vendors
         for i in range(num_vendors):
             p = 0
             while p in checked:
                 p = self.rand.randint(len(self.inventory))
             checked.append(p)
-            pth_index = (len(self.inventory) - p )
+            pth_index = (len(self.inventory) - p)
             # O(log(N)) -> N is the number of items in inventory
             for j, key in list(enumerate(self.inventory)):
                 # p starts from 1 - k, hence we add 1 to j
                 if pth_index == j:
+                    # getting items from an AVL tree is usually O(1)
                     node = self.inventory.get_tree_node_by_key(key).item
                     name, amount = node[0].name, node[1]
                     self.potion_table[name].quantity = amount
@@ -130,7 +139,6 @@ class Game:
         except Exception as e:
             print(f"Error: {type(e)}: {e}")
             return day_profits
-
         """
         This for loop goes through each potion_valuation and creates the binary tree.
         
@@ -143,12 +151,13 @@ class Game:
         if the tree contains the key already, it simply changes the boolean in the 
         tuple to True and creates a stack to store each potion with the same key.
         """
+
         for i in range(len(potion_valuations)):
 
             name, valuation = potion_valuations[i] # splitting potion_valuation by line
             vendor_buy_price = self.potion_table[name].buy_price
             profit_margin = valuation - vendor_buy_price
-            ratio = profit_margin / vendor_buy_price    # profit ratio using the name from the hash table
+            ratio = profit_margin / vendor_buy_price  # profit ratio using the name from the hash table
             quantity = self.potion_table[name].quantity
 
             if ratio not in ratio_tree:     # checks if the key ratio already exists
@@ -183,7 +192,7 @@ class Game:
             final_money = 0
             print(f"\nStaring Day Money: {money}")
 
-            while money > 0:
+            while money > 0 and len(checked) <= len(ratio_tree):
                 max_ratio = ratio_tree.get_minimal(ratio_tree.root).key
                 # loops through the ratio tree for the maximum ratio and extracts it from the tree
                 for ratio in ratio_tree:
