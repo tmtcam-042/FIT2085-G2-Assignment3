@@ -4,22 +4,11 @@ from hash_table import LinearProbePotionTable
 from potion import Potion
 from avl import AVLTree
 
-
+""" 
+Main game being run
+"""
 class Game:
-    """
-    REASON FOR USED ADTs
-        potion_table : Hash Table
-            Hash tables, have a search time complexity of O(1) i.e constant in the
-            best case and O(n) in the worst case (if implemented properly, it will
-            usually always be constant). To minimise our searching time, we have
-            chosen a hash table for potion_table
 
-        inventory : AVL Tree
-            AVL tree has a search, deletion, and insertion time complexity of
-            O(log(N)) in the worst and O(1) in the best case, when the tree is empty.
-            To match our required time complexity for the all the used operations (when
-            finding the correct potion), we decided to go with the AVL tree.
-    """
     def __init__(self, seed=0) -> None:
         self.rand = RandomGen(seed=seed)
         self.potion_table = None
@@ -36,7 +25,6 @@ class Game:
         for potion in potion_data:
             name, _type, price = potion
             self.potion_table[name] = Potion.create_empty(_type, name, price)
-            print(self.potion_table)
 
     def add_potions_to_inventory(self, potion_name_amount_pairs: list[tuple[str, float]]) -> None:
         """
@@ -51,22 +39,16 @@ class Game:
             potion_object = self.potion_table[name]
             self.inventory[potion_object.buy_price] = (potion_object, amount)
 
-    def choose_potions_for_vendors(self, num_vendors: int) -> list[tuple[str, float]]:
+    def choose_potions_for_vendors(self, num_vendors: int) -> list:
         """
-        This method completes the vendor potion selection process and returns a list
-        of potion names along with their quantity in inventory
-        :param num_vendors: int
-        :pre: num_vendors > 0
-        :return: list of tuples [(name_of_potion, quantity)]
+
         """
         # self.inventory.print_tree()
         vendor_potion_list = []
-        saved_inventory = self.inventory
-
-        # O(C) -> C is the number of vendors
+        # saved_inventory = self.inventory
         for i in range(num_vendors):
             p = self.rand.randint(len(self.inventory))
-            # O(log(N)) -> N is the number of items in inventory
+
             for j, key in enumerate(self.inventory):
                 # p starts from 1 - k, hence we add 1 to j
                 if p == j + 1:
@@ -77,7 +59,7 @@ class Game:
                     del self.inventory[key]
                     break
 
-        self.inventory = saved_inventory
+        # self.inventory = saved_inventory
         return vendor_potion_list
 
     def solve_game(self, potion_valuations: list[tuple[str, float]], starting_money: list[int]) -> list[float]:
@@ -102,11 +84,13 @@ class Game:
         :pre: this list of potion_valuation must contain 1 or more elements
         :raises ValueError: if the list is empty
         :complexity best: O(N) x O(log(N)) - where the O(N) is the n length of 
-        the potion_valuation that is being iterated through. The best case 
-        complexity for insertion in a BST is log(N) where the tree is balanced
+            the potion_valuation that is being iterated through. The best case 
+            complexity for insertion in a BST is log(N) where the tree is balanced 
+            and the insert key is less that the root node
         :complexity worst: O(N^2) - the O(N) for the n length of potion_valuation remains
-        the same but the insertion
-        :average complexity: O(N) x O(log(N))
+            the same but the insertion into the BST becomes O(N) where the length of the 
+            tree must be searched before inserting.
+        :average complexity: O(N) x O(log(N)) 
         """
         # TODO: CHECK THIS IS RIGHT AND GET RID OF PRINT STATEMENTS
         for i in range(len(potion_valuations)): # Loop time complexity: O(N) where N is the length of potion_valuations
@@ -138,8 +122,12 @@ class Game:
             :raises Exception: if the tree does not exist
             :pre: there must be integer values in starting_money list
             :raises Exception: if the list has not been defined
-            :complexity best: O(M) x O(log(N))
-            :complexity worst: O(M) x O(N)
+            :complexity best: O(M) x O(log(N)) - where O(M) is the length of the list of 
+                starting_money and O(log(N)) is the best time complexity of searching a binary
+                tree
+            :complexity worst: O(M) x O(N) - The time complexity for the starting_money list 
+                the same but the worst time complexity of the BST is O(N) where the whole length 
+                of the tree must be searched to find the key
             :average complexity: O(M) x O(N)
         """
         for money in starting_money:    # Loop Time complexity: O(M)
