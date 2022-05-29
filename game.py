@@ -9,8 +9,6 @@ Main game that stimulates the playing process of trading with vendor and selling
 to the adventurer
 
 """
-
-
 class Game:
     """
     REASON FOR USED ADTs
@@ -45,15 +43,10 @@ class Game:
         self.inventory = AVLTree()
 
     def set_total_potion_data(self, potion_data: list) -> None:
-        """
-        Accepts a list containing potion data and creates empty potion objects
-        using that data and adds it to a hash table
+        """ Hash table!
 
-        :param potion_data: list of potion data ["Potion of Health Regeneration", "Health", 20]
+        :param potion_data:
         :pre: List has to be correct, is not empty
-        :complexity: O(N) -> N is the length of potion data
-                     adding items to a hash table is O(1)
-        :return: None
         """
         self.potion_table = LinearProbePotionTable(len(potion_data))
         for potion in potion_data:
@@ -62,21 +55,11 @@ class Game:
 
     def add_potions_to_inventory(self, potion_name_amount_pairs: list[tuple[str, float]]) -> None:
         """
-        Uses the starting money to buy and sell potions for the amount of money left at the
-        end of each played day.
-
-        :param arg1: potion_valuations: is a list of potions that each vendor is selling, paired with its valuation
-                           by the adventurers
-        :param arg2: starting_money: is a list containing, for each attempt, the starting allowance the player has.
-
-        :complexity best case: 𝐎(𝑁 + 𝑀) - where the O(N) is the n length of
-            the potion_valuation that is being iterated through. The best case
-            complexity for insertion and searcg a binary search tree is O(1)
-            where the tree is empty or the searching key is at the tree root.
-        :complexity worst case: 𝐎(𝑁 x log(N) + 𝑀 × N) - the O(N) for the n length of potion_valuation remains
-            the same but the insertion into the BST becomes log(N) where the tree is balanced and sorted
-            so the given key can be found by comparing keys. This is the same complexity for searching
-            where the tree is sorted and balanced
+        Add litres of potion into the current inventory of the vendor company. Takes a list
+        of tuples containing names of potion and a float representing litres to add to the inventory.
+        :raises ValueError: if current is None, raises Subtree is empty
+        :complexity: Best O(1) if subtree is empty, worst O(log N) where N is the height
+                        of current.
         """
         for potion in potion_name_amount_pairs:
             name, amount = potion
@@ -90,26 +73,22 @@ class Game:
         of potion names along with their quantity in inventory
         :param num_vendors: int
         :pre: num_vendors > 0
-        :required complexity: O(C x log(N))
-        :achieved complexity: O(C x log(N))
         :return: list of tuples [(name_of_potion, quantity)]
         """
         # self.inventory.print_tree()
         vendor_potion_list = []
         checked = [0]
         # saved_inventory = self.inventory
-        # O(C) -> C is the number of vendors
         for i in range(num_vendors):
             p = 0
             while p in checked:
                 p = self.rand.randint(len(self.inventory))
             checked.append(p)
-            pth_index = (len(self.inventory) - p)
+            pth_index = (len(self.inventory) - p )
             # O(log(N)) -> N is the number of items in inventory
             for j, key in list(enumerate(self.inventory)):
                 # p starts from 1 - k, hence we add 1 to j
                 if pth_index == j:
-                    # getting items from an AVL tree is usually O(1)
                     node = self.inventory.get_tree_node_by_key(key).item
                     name, amount = node[0].name, node[1]
                     self.potion_table[name].quantity = amount
@@ -151,6 +130,7 @@ class Game:
         except Exception as e:
             print(f"Error: {type(e)}: {e}")
             return day_profits
+
         """
         This for loop goes through each potion_valuation and creates the binary tree.
         
@@ -163,27 +143,23 @@ class Game:
         if the tree contains the key already, it simply changes the boolean in the 
         tuple to True and creates a stack to store each potion with the same key.
         """
-
         for i in range(len(potion_valuations)):
 
-            name, valuation = potion_valuations[i]
+            name, valuation = potion_valuations[i] # splitting potion_valuation by line
             vendor_buy_price = self.potion_table[name].buy_price
             profit_margin = valuation - vendor_buy_price
-            ratio = profit_margin / vendor_buy_price  # profit ratio using the name from the hash table
+            ratio = profit_margin / vendor_buy_price    # profit ratio using the name from the hash table
             quantity = self.potion_table[name].quantity
 
-            if ratio not in ratio_tree:  # checks if the key ratio already exists
-                ratio_tree[ratio] = (False, (name, vendor_buy_price, valuation, profit_margin, ratio,
-                                             quantity))  # if key node is empty, add a tuple with False and the potion details
+            if ratio not in ratio_tree:     # checks if the key ratio already exists
+                ratio_tree[ratio] = (False, (name, vendor_buy_price, valuation, profit_margin, ratio, quantity))      # if key node is empty, add a tuple with False and the potion details
             else:
-                tree_stack = LinkedStack()  # if duplicate exists, create linked stack
-                current_potion = ratio_tree[ratio][1]  # save the current potion details in that key
-                del ratio_tree[ratio]  # delete the key to avoid duplicate error
-                tree_stack.push(current_potion)  # push the current potion into the empty stack
-                tree_stack.push((name, vendor_buy_price, valuation, profit_margin, ratio,
-                                 quantity))  # push the new potion into the stack
-                ratio_tree[ratio] = (
-                True, tree_stack)  # insert the tuple of True and stack to indicate it is a duplicate
+                tree_stack = LinkedStack()      # if duplicate exists, create linked stack
+                current_potion = ratio_tree[ratio][1] # save the current potion details in that key
+                del ratio_tree[ratio]       # delete the key to avoid duplicate error
+                tree_stack.push(current_potion)     # push the current potion into the empty stack
+                tree_stack.push((name, vendor_buy_price, valuation, profit_margin, ratio, quantity))    # push the new potion into the stack
+                ratio_tree[ratio] = (True, tree_stack)      # insert the tuple of True and stack to indicate it is a duplicate
 
         """
             Iterates through the money values for each day and calculates the money remaining 
@@ -200,11 +176,11 @@ class Game:
             print(f"Error: {type(e)}: {e}")
             return day_profits
 
-        for money in starting_money:  # Loop Time complexity: O(M)
+        for money in starting_money:    # Loop Time complexity: O(M)
 
             checked = []
             temp_stack = LinkedStack()
-            profit_for_day = 0
+            final_money = 0
             print(f"\nStaring Day Money: {money}")
 
             while money > 0:
@@ -243,16 +219,16 @@ class Game:
                 # else it will see how much was bought and calculate the new profit before making money
                 # equal 0
                 if money >= quantity * vendor_buy_price:
-                    profit_for_day += quantity * valuation
+                    final_money += quantity * valuation
                     print(f"Bought the whole stock: {quantity}L for ${vendor_buy_price} each\n")
                     money -= quantity * vendor_buy_price
                     print(f"Money left: {money}")
                 else:
                     new_quantity = money / vendor_buy_price
                     print(f"Went broke buying: {new_quantity}L for ${vendor_buy_price} each\n")
-                    profit_for_day += new_quantity * valuation
+                    final_money += new_quantity * valuation
                     money = 0
 
-            day_profits.append(profit_for_day)
+            day_profits.append(final_money)
 
         return day_profits
