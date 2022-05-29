@@ -1,8 +1,8 @@
 from game import Game
 import time
 
-G = Game(int(time.strftime('%S')))
-# G = Game(0)
+# G = Game(int(time.strftime('%S')))
+G = Game(0)
 # There are these potions, with these stats, available over the course of the game.
 G.set_total_potion_data([
     # Name, Category, Buying price from vendors.
@@ -18,7 +18,7 @@ G.set_total_potion_data([
 # Let’s begin by adding to the inventory of PotionCorp:
 G.add_potions_to_inventory([
     # (name, quantity)
-    ("Potion of Health Regeneration", 0.5),
+    ("Potion of Health Regeneration", 5),
     ("Potion of Extreme Speed", 5),
     ("Potion of Instant Health", 3),
     ("Potion of Increased Stamina", 10),
