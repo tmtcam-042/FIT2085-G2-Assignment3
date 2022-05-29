@@ -1,33 +1,41 @@
 def largest_prime(k: int) -> int:
     """
-    for i = 2, 3, 4, ..., not exceeding √n do
-    if A[i] is true
-        for j = i2, i2+i, i2+2i, i2+3i, ..., not exceeding n do
-            set A[j] := false
-
-    return all i such that A[i] is true.
+    A function designed to return the largest prime number less than k.
+    Implemented using the Sieve of Eratosthenes algorithm.
+    :pre: k must be an integer >= 3
+    :post: the integer returned is strictly less than k
+    :raises ValueError: if k < 3
+    :raises TypeError: if k is not integer
+    :complexity: best and worst O(N log(log N)) where N is the value of k
+    :return: the largest prime number strictly less than k
     """
 
-    primes_list = [True for i in range(k + 1)]
-    p = 2
+    try:
+        if k < 3:
+            raise ValueError("Input must be >= 3")
+        primes_list = [True for i in range(k)]
+        p = 2
 
-    while p * p <= k:
+        while p ** 2 <= k:
 
-        # If prime[p] is not changed, then it is a prime
-        if primes_list[p]:
+            # If prime[p] is not changed, then it is a prime
+            if primes_list[p]:
 
-            # Update all multiples of p
-            for i in range(p ** 2, k + 1, p):
-                primes_list[i] = False
+                # Update all multiples of p
+                for i in range(p ** 2, k, p):
+                    primes_list[i] = False
 
-        p += 1
+            p += 1
 
-    primes_list[0] = False
-    primes_list[1] = False
+        primes_list[0] = False
+        primes_list[1] = False
 
-    # Print all prime numbers
-    return max([i for i, b in enumerate(primes_list) if b])
+        # Print all prime numbers
+        return max([i for i, b in enumerate(primes_list) if b])
+
+    except Exception as e:
+        print(f"Error {type(e)}: {e}")
 
 
 if __name__ == "__main__":
-    print(largest_prime(100))
+    print(largest_prime(47))

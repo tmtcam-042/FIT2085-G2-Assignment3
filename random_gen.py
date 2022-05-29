@@ -17,7 +17,13 @@ class RandomGen:
         next(self.randgen)  # To clear initial value of 1 from generator
 
     def randint(self, k: int) -> int:
-        # Note for future selves: unit test - track binary numbers and confirm operation happens
+        """
+
+        :param k: positive non-zero integer
+        :return: random number in range (1,k) inclusive
+        """
+        if k == 0:
+            return 0
         randlist = []
         for i in range(0, 5):
             # TODO: make this O(1)
