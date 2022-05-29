@@ -73,10 +73,14 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
 
     def delete_aux(self, current: AVLTreeNode, key: K) -> AVLTreeNode:
         """
-            Attempts to delete an item from the tree, it uses the Key to
-            determine the node to delete. After deletion,
-            performs sub-tree rotation whenever it becomes unbalanced.
-            returns the new root of the subtree.
+
+            :param current: root node of tree or sub-tree to search through for deletion
+            :param key: key of node to be deleted
+            :pre:
+            :post:
+            :raises ValueError:
+            :complexity:
+            :returns:
         """
         if current is None:  # key not found
             raise ValueError('Deleting non-existent item')
