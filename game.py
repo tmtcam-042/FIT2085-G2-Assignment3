@@ -56,21 +56,11 @@ class Game:
 
     def add_potions_to_inventory(self, potion_name_amount_pairs: list[tuple[str, float]]) -> None:
         """
-        Uses the starting money to buy and sell potions for the amount of money left at the
-        end of each played day.
-
-        :param arg1: potion_valuations: is a list of potions that each vendor is selling, paired with its valuation
-                           by the adventurers
-        :param arg2: starting_money: is a list containing, for each attempt, the starting allowance the player has.
-
-        :complexity best case: 𝐎(𝑁 + 𝑀) - where the O(N) is the n length of
-            the potion_valuation that is being iterated through. The best case
-            complexity for insertion and searcg a binary search tree is O(1)
-            where the tree is empty or the searching key is at the tree root.
-        :complexity worst case: 𝐎(𝑁 x log(N) + 𝑀 × N) - the O(N) for the n length of potion_valuation remains
-            the same but the insertion into the BST becomes log(N) where the tree is balanced and sorted
-            so the given key can be found by comparing keys. This is the same complexity for searching
-            where the tree is sorted and balanced
+        Add litres of potion into the current inventory of the vendor company. Takes a list
+        of tuples containing names of potion and a float representing litres to add to the inventory.
+        :raises ValueError: if current is None, raises Subtree is empty
+        :complexity: Best O(1) if subtree is empty, worst O(log N) where N is the height
+                        of current.
         """
         for potion in potion_name_amount_pairs:
             name, amount = potion
@@ -192,7 +182,7 @@ class Game:
 
             checked = []
             temp_stack = LinkedStack()
-            profit_for_day = 0
+            final_money = 0
             print(f"\nStaring Day Money: {money}")
 
             while money > 0:
@@ -231,16 +221,16 @@ class Game:
                 # else it will see how much was bought and calculate the new profit before making money
                 # equal 0
                 if money >= quantity * vendor_buy_price:
-                    profit_for_day += quantity * valuation
+                    final_money += quantity * valuation
                     print(f"Bought the whole stock: {quantity}L for ${vendor_buy_price} each\n")
                     money -= quantity * vendor_buy_price
                     print(f"Money left: {money}")
                 else:
                     new_quantity = money / vendor_buy_price
                     print(f"Went broke buying: {new_quantity}L for ${vendor_buy_price} each\n")
-                    profit_for_day += new_quantity * valuation
+                    final_money += new_quantity * valuation
                     money = 0
 
-            day_profits.append(profit_for_day)
+            day_profits.append(final_money)
 
         return day_profits
