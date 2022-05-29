@@ -8,15 +8,6 @@ from avl import AVLTree
 Main game that stimulates the playing process of trading with vendor and selling
 to the adventurer
 
-ADTs used:
-AVL Tree (ratio_tree) - Used to store the potions in potion_valuation by its profit ratio as
-    the key. This allows the tree to be sorted by the best ratio to the worst ratio so
-    that when traversing through, it is at its best time complexity to find the best ratio
-    to begin the trading and selling process.
-Linked Stack(tree_stack) -  This stores any duplicates of the same ratio within itself before being 
-    inserted into the tree. Having this stack allows for any duplication errors to be overcome
-    and its implementation to allow for poping and pushing of duplicates when necessary without
-    affecting the time complexity of having to iterate through a list or array.
 """
 class Game:
     """
@@ -32,7 +23,20 @@ class Game:
             O(log(N)) in the worst and O(1) in the best case, when the tree is empty.
             To match our required time complexity for the all the used operations (when
             finding the correct potion), we decided to go with the AVL tree.
+
+        ratio tree: AVL Tree
+            Used to store the potions in potion_valuation by its profit ratio as
+            the key. This allows the tree to be sorted by the best ratio to the worst ratio so
+            that when traversing through, it is at its best time complexity to find the best ratio
+            to begin the trading and selling process.
+
+            tree stack: Linked Stack
+            This stores any duplicates of the same ratio within itself before being
+            inserted into the tree. Having this stack allows for any duplication errors to be overcome
+            and its implementation to allow for poping and pushing of duplicates when necessary without
+            affecting the time complexity of having to iterate through a list or array.
     """
+
     def __init__(self, seed=0) -> None:
         self.rand = RandomGen(seed=seed)
         self.potion_table = None
@@ -120,6 +124,7 @@ class Game:
 
         """
         This for loop goes through each potion_valuation and creates the binary tree.
+        
         :pre: this list of potion_valuation must contain 1 or more elements
         :raises ValueError: if the list is empty
         
