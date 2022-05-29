@@ -5,7 +5,18 @@ from potion import Potion
 from avl import AVLTree
 
 """ 
-Main game being run
+Main game that stimulates the playing process of trading with vendor and selling
+to the adventurer
+
+ADTs used:
+AVL Tree (ratio_tree) - Used to store the potions in potion_valuation by its profit ratio as
+    the key. This allows the tree to be sorted by the best ratio to the worst ratio so
+    that when traversing through, it is at its best time complexity to find the best ratio
+    to begin the trading and selling process.
+Linked Stack(tree_stack) -  This stores any duplicates of the same ratio within itself before being 
+    inserted into the tree. Having this stack allows for any duplication errors to be overcome
+    and its implementation to allow for poping and pushing of duplicates when necessary without
+    affecting the time complexity of having to iterate through a list or array.
 """
 class Game:
 
@@ -72,9 +83,14 @@ class Game:
                            by the adventurers
         :param arg2: starting_money: is a list containing, for each attempt, the starting allowance the player has.
 
-        :complexity best case: 𝐎(𝑁 × log(𝑁) + 𝑀 × log(N))
-        :complexity worst case: 𝐎(𝑁^2 + 𝑀 × N)
-        :average complexity: 𝐎(𝑁 × log(𝑁) + 𝑀 × 𝑁)
+        :complexity best case: 𝐎(𝑁 + 𝑀) - where the O(N) is the n length of
+            the potion_valuation that is being iterated through. The best case
+            complexity for insertion and searcg a binary search tree is O(1)
+            where the tree is empty or the searching key is at the tree root.
+        :complexity worst case: 𝐎(𝑁 x log(N) + 𝑀 × N) - the O(N) for the n length of potion_valuation remains
+            the same but the insertion into the BST becomes log(N) where the tree is balanced and sorted
+            so the given key can be found by comparing keys. This is the same complexity for searching
+            where the tree is sorted and balanced
         """
 
         day_profits = []
@@ -84,17 +100,14 @@ class Game:
         This for loop goes through each potion_valuation and creates the binary tree.
         :pre: this list of potion_valuation must contain 1 or more elements
         :raises ValueError: if the list is empty
-        :complexity best: O(N) x O(log(N)) - where the O(N) is the n length of 
-            the potion_valuation that is being iterated through. The best case 
-            complexity for insertion in a BST is log(N) where the tree is balanced 
-            and the insert key is less that the root node
-        :complexity worst: O(N^2) - the O(N) for the n length of potion_valuation remains
-            the same but the insertion into the BST becomes O(N) where the length of the 
-            tree must be searched before inserting.
-        :average complexity: O(N) x O(log(N)) 
+        
+        This solution requires for each value of the potion_valuation have a profit 
+        ratio calculated. This is then used as its key to be inserted into a sorted 
+        AVL tree as a tuple with a boolean value. To solve the issue of duplicates, 
+        if the tree contains the key already, it simply changes the boolean in the 
+        tuple to True and creates a stack to store each potion with the same key.
         """
-        # TODO: CHECK THIS IS RIGHT AND GET RID OF PRINT STATEMENTS
-        for i in range(len(potion_valuations)): # Loop time complexity: O(N) where N is the length of potion_valuations
+        for i in range(len(potion_valuations)):
 
             if len(potion_valuations) == 0:
                 raise ValueError(f"List has length: {len(potion_valuations)}")
@@ -102,18 +115,18 @@ class Game:
             name, valuation = potion_valuations[i]
             vendor_buy_price = self.potion_table[name].buy_price
             profit_margin = valuation - vendor_buy_price
-            ratio = profit_margin / vendor_buy_price
+            ratio = profit_margin / vendor_buy_price    # profit ratio using the name from the hash table
             quantity = self.potion_table[name].quantity
 
-            if ratio not in ratio_tree:     # Binary Tree Insertion Time complexity: O(log(N))
-                ratio_tree[ratio] = (False, (name, vendor_buy_price, valuation, profit_margin, ratio, quantity))
+            if ratio not in ratio_tree:     # checks if the key ratio already exists
+                ratio_tree[ratio] = (False, (name, vendor_buy_price, valuation, profit_margin, ratio, quantity))    # if key node is empty, add a tuple with False and the potion details
             else:
-                tree_stack = LinkedStack()
-                dup_ratio = ratio_tree[ratio][1]
-                del ratio_tree[ratio]
-                tree_stack.push(dup_ratio)
-                tree_stack.push((name, vendor_buy_price, valuation, profit_margin, ratio, quantity))
-                ratio_tree[ratio] = (True, tree_stack)
+                tree_stack = LinkedStack()  # if duplicate exists, create linked stack
+                current_potion = ratio_tree[ratio][1] # save the current potion details in that key
+                del ratio_tree[ratio]   # delete the key to avoid duplicate error
+                tree_stack.push(current_potion) # push the current potion into the empty stack
+                tree_stack.push((name, vendor_buy_price, valuation, profit_margin, ratio, quantity))    # push the new potion into the stack
+                ratio_tree[ratio] = (True, tree_stack)      # insert the tuple of True and stack to indicate it is a duplicate
 
         """
             Iterates through the money values for each day and calculates the money remaining 
@@ -123,13 +136,6 @@ class Game:
             :raises Exception: if the tree does not exist
             :pre: there must be integer values in starting_money list
             :raises Exception: if the list has not been defined
-            :complexity best: O(M) x O(log(N)) - where O(M) is the length of the list of 
-                starting_money and O(log(N)) is the best time complexity of searching a binary
-                tree
-            :complexity worst: O(M) x O(N) - The time complexity for the starting_money list 
-                the same but the worst time complexity of the BST is O(N) where the whole length 
-                of the tree must be searched to find the key
-            :average complexity: O(M) x O(N)
         """
         for money in starting_money:    # Loop Time complexity: O(M)
 
@@ -139,46 +145,55 @@ class Game:
                 raise ValueError("List has length 0")
 
             checked = []
-            temporary_stack = LinkedStack()
+            temp_stack = LinkedStack()
             profit_for_day = 0
             print(f"\nStaring Day Money: {money}")
 
             while money > 0:
                 max_ratio = ratio_tree.get_minimal(ratio_tree.root).key
-                for ratio in ratio_tree:  # Loop Time complexity: O(N)
+                # loops through the ratio tree for the maximum ratio and extracts it from the tree
+                for ratio in ratio_tree:
                     if ratio >= max_ratio and not (ratio in checked):
                         max_ratio = ratio
-
                 best_ratio_item = ratio_tree[max_ratio]
-                original_stack = best_ratio_item[1]
 
-                if best_ratio_item[0]:  # checks is the stack is True (duplicate)
-                    item = original_stack.pop()  # pops it off
-                    temporary_stack.push(item)  # pushes it into the temporary stack
+                # Checks the number to see if its first element is true. This means it's a duplicate
+                # and it will then store the stack and pop off its first element. In doing so it also
+                # pushes this popped element into the temp_stack. If False then continues to store the
+                # potion tuple and add its ratio to the checked list.
+                if best_ratio_item[0]:
+                    original_stack = best_ratio_item[1]
+                    item = original_stack.pop()
+                    temp_stack.push(item)
 
-                    if original_stack.is_empty():  # if the stack is empty (no more duplicates)
-                        checked.append(max_ratio)  # add the node to visited nodes
-                        del ratio_tree[max_ratio]  # delete the node at that key
-                        ratio_tree[max_ratio] = (True, temporary_stack) # reset it by putting the temp stack in place of the whole stack
+                    # checks after popping, if the stack is empty. Adds the ratio to the checked list
+                    # and deletes the redundant node at that key with the empty stack before readding
+                    # it with the full temp_stack
+                    if original_stack.is_empty():
+                        checked.append(max_ratio)
+                        del ratio_tree[max_ratio]
+                        ratio_tree[max_ratio] = (True, temp_stack)
                 else:
-                    checked.append(max_ratio)  # if no duplicate, add key to checked list
-                    item = best_ratio_item[1]  # item is the second element bc there is no stack
+                    checked.append(max_ratio)
+                    item = best_ratio_item[1]
 
                 print(f"Potion bought: {item}")
                 name, vendor_buy_price, valuation, profit_margin, ratio, quantity = item  # split item into its parts
 
-                if money >= quantity * vendor_buy_price:  # if we can buy the whole inventory and still have money left
-                    profit_for_day += quantity * valuation  # whole inventory * adventurer buy price
+                # checks if there is money remaining after buying the whole inventory of that potion.
+                # calculates the profit for the day and subtracts the money lost from the total money.
+                # else it will see how much was bought and calculate the new profit before making money
+                # equal 0
+                if money >= quantity * vendor_buy_price:
+                    profit_for_day += quantity * valuation
                     print(f"Bought the whole stock: {quantity}L for ${vendor_buy_price} each\n")
-                    money -= quantity * vendor_buy_price  # subtract this from the money
+                    money -= quantity * vendor_buy_price
                     print(f"Money left: {money}")
                 else:
-                    if best_ratio_item[0]:  # if it was a part of a duplicate and it was only the first one used, put it back
-                        original_stack.push(item)
-                    new_quantity = money / vendor_buy_price  # quantity of potion purchased (L)
+                    new_quantity = money / vendor_buy_price
                     print(f"Went broke buying: {new_quantity}L for ${vendor_buy_price} each\n")
-                    profit_for_day += new_quantity * valuation  # money earned from sale of potion
-                    money = 0  # set money to 0 since we broke
+                    profit_for_day += new_quantity * valuation
+                    money = 0
 
             day_profits.append(profit_for_day)
 
