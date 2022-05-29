@@ -47,7 +47,6 @@ class Game:
 
         :param potion_data:
         :pre: List has to be correct, is not empty
-        :return:
         """
         self.potion_table = LinearProbePotionTable(len(potion_data))
         for potion in potion_data:
@@ -60,7 +59,7 @@ class Game:
         end of each played day.
 
         :param arg1: potion_valuations: is a list of potions that each vendor is selling, paired with its valuation
-                           by the adventurers
+            by the adventurers
         :param arg2: starting_money: is a list containing, for each attempt, the starting allowance the player has.
 
         :complexity best case: 𝐎(𝑁 + 𝑀) - where the O(N) is the n length of
@@ -141,6 +140,7 @@ class Game:
         except Exception as e:
             print(f"Error: {type(e)}: {e}")
             return day_profits
+
         """
         This for loop goes through each potion_valuation and creates the binary tree.
         
@@ -153,23 +153,21 @@ class Game:
         if the tree contains the key already, it simply changes the boolean in the 
         tuple to True and creates a stack to store each potion with the same key.
         """
-
-
         for i in range(len(potion_valuations)):
 
-            name, valuation = potion_valuations[i]
+            name, valuation = potion_valuations[i] # splitting potion_valuation by line
             vendor_buy_price = self.potion_table[name].buy_price
             profit_margin = valuation - vendor_buy_price
             ratio = profit_margin / vendor_buy_price    # profit ratio using the name from the hash table
             quantity = self.potion_table[name].quantity
 
             if ratio not in ratio_tree:     # checks if the key ratio already exists
-                ratio_tree[ratio] = (False, (name, vendor_buy_price, valuation, profit_margin, ratio, quantity))    # if key node is empty, add a tuple with False and the potion details
+                ratio_tree[ratio] = (False, (name, vendor_buy_price, valuation, profit_margin, ratio, quantity))      # if key node is empty, add a tuple with False and the potion details
             else:
-                tree_stack = LinkedStack()  # if duplicate exists, create linked stack
+                tree_stack = LinkedStack()      # if duplicate exists, create linked stack
                 current_potion = ratio_tree[ratio][1] # save the current potion details in that key
-                del ratio_tree[ratio]   # delete the key to avoid duplicate error
-                tree_stack.push(current_potion) # push the current potion into the empty stack
+                del ratio_tree[ratio]       # delete the key to avoid duplicate error
+                tree_stack.push(current_potion)     # push the current potion into the empty stack
                 tree_stack.push((name, vendor_buy_price, valuation, profit_margin, ratio, quantity))    # push the new potion into the stack
                 ratio_tree[ratio] = (True, tree_stack)      # insert the tuple of True and stack to indicate it is a duplicate
 
