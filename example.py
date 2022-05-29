@@ -18,7 +18,7 @@ G.set_total_potion_data([
 # Let’s begin by adding to the inventory of PotionCorp:
 G.add_potions_to_inventory([
     # (name, quantity)
-    ("Potion of Health Regeneration", 4),
+    ("Potion of Health Regeneration", 5),
     ("Potion of Extreme Speed", 5),
     ("Potion of Instant Health", 3),
     ("Potion of Increased Stamina", 10),
