@@ -45,6 +45,7 @@ class Game:
         """
         # self.inventory.print_tree()
         vendor_potion_list = []
+        checked = []
         # saved_inventory = self.inventory
         for i in range(num_vendors):
             p = self.rand.randint(len(self.inventory))
