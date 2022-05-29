@@ -59,8 +59,8 @@ class Game:
         """
         for potion in potion_name_amount_pairs:
             name, amount = potion
-            self.potion_table[name].quantity = amount
             potion_object = self.potion_table[name]
+            potion_object.quantity = amount
             self.inventory[potion_object.buy_price] = (potion_object, amount)
 
     def choose_potions_for_vendors(self, num_vendors: int) -> list[tuple[str, float]]:
@@ -73,19 +73,24 @@ class Game:
         """
         # self.inventory.print_tree()
         vendor_potion_list = []
-        checked = []
+        checked = [0]
+        inventory_len = len(self.inventory)
         # saved_inventory = self.inventory
         for i in range(num_vendors):
-            p = self.rand.randint(len(self.inventory))
+            p = 0
+            while p in checked:
+                p = self.rand.randint(len(self.inventory))
+            checked.append(p)
+            pth_index = (len(self.inventory) - p )
             # O(log(N)) -> N is the number of items in inventory
-            for j, key in enumerate(self.inventory):
+            for j, key in list(enumerate(self.inventory)):
                 # p starts from 1 - k, hence we add 1 to j
-                if p == j + 1:
+                if pth_index == j:
                     node = self.inventory.get_tree_node_by_key(key).item
                     name, amount = node[0].name, node[1]
-                    # self.potion_table[name].quantity = amount
+                    self.potion_table[name].quantity = amount
                     vendor_potion_list.append((name, amount))
-                    del self.inventory[key]
+                    # del self.inventory[key]
                     break
 
         # self.inventory = saved_inventory
