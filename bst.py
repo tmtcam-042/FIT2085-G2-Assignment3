@@ -238,10 +238,13 @@ class BinarySearchTree(Generic[K, I]):
             print('{0}'.format(real_prefix), file=to)
 
     def print_tree(self, val="key", left="left", right="right"):
-        lines, *_ = self.display(self.root, val, left, right)
-        print("\n")
-        for line in lines:
-            print("     " + line)
+        try:
+            lines, *_ = self.display(self.root, val, left, right)
+            print("\n")
+            for line in lines:
+                print("     " + line)
+        except:
+            pass
 
     def display(self, root, val="key", left="left", right="right"):
         """Returns list of strings, width, height, and horizontal coordinate of the root."""
