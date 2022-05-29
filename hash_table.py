@@ -49,7 +49,8 @@ class LinearProbePotionTable(Generic[T]):
 
     def hash(self, potion_name: str) -> int:
         """
-        Hashes the potions name
+        Hashes the potions name using either good hash or bad hash
+        :complexity: O(1) where checking use.hash and hashing is constant
         """
         if self.useHash:
             return Potion.good_hash(potion_name, self.table_size)  # added a getter to the Potion class, unsure if this works
@@ -57,8 +58,16 @@ class LinearProbePotionTable(Generic[T]):
             return Potion.bad_hash(potion_name, self.table_size)
 
     def statistics(self) -> tuple:
-        """"""
+        """
+        Creates a tuple with the conflict_count, probe_total and probe_max
+        :pre: checks if the stat_tuple is empty
+        :raises TypeError: if it is None
+        :complexity: O(1) where returning a tuple is constant
+        """
         stat_tuple = (self.conflict_count, self.probe_total, self.probe_max,)
+        if stat_tuple is None:
+            raise TypeError("cannot return type None")
+
         return stat_tuple
 
     def __len__(self) -> int:
