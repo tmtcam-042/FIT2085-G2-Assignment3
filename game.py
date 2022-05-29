@@ -36,13 +36,12 @@ class Game:
             self.potion_table[name].quantity = amount
             potion_object = self.potion_table[name]
             self.inventory[potion_object.buy_price] = (potion_object, amount)
-        self.inventory.print_tree()
 
     def choose_potions_for_vendors(self, num_vendors: int) -> list:
         """
 
         """
-        self.inventory.print_tree()
+        # self.inventory.print_tree()
         vendor_potion_list = []
         saved_inventory = self.inventory
         for i in range(num_vendors):
@@ -59,17 +58,20 @@ class Game:
                     break
 
         self.inventory = saved_inventory
-        self.inventory.print_tree()
         return vendor_potion_list
 
     def solve_game(self, potion_valuations: list[tuple[str, float]], starting_money: list[int]) -> list[float]:
         """
+        Uses the starting money to buy and sell potions for the amount of money left at the
+        end of each played day.
 
-        potion_valuations: is a list of potions that each vendor is selling, paired with its valuation
+        :param arg1: potion_valuations: is a list of potions that each vendor is selling, paired with its valuation
                            by the adventurers
-        starting_money: is a list containing, for each attempt, the starting allowance the player has.
+        :param arg2: starting_money: is a list containing, for each attempt, the starting allowance the player has.
 
-        required complexity: 𝐎(𝑁 × log(𝑁) + 𝑀 × 𝑁)
+        :complexity best case: 𝐎(𝑁 × log(𝑁) + 𝑀 × log(N))
+        :complexity worst case: 𝐎(𝑁^2 + 𝑀 × N)
+        :average complexity: 𝐎(𝑁 × log(𝑁) + 𝑀 × 𝑁)
         """
 
         day_profits = []
@@ -79,8 +81,11 @@ class Game:
         This for loop goes through each potion_valuation and creates the binary tree.
         :pre: this list of potion_valuation must contain 1 or more elements
         :raises ValueError: if the list is empty
-        :complexity best: O(N) x O(log(N))
-        :complexity worst: O(N^2) 
+        :complexity best: O(N) x O(log(N)) - where the O(N) is the n length of 
+        the potion_valuation that is being iterated through. The best case 
+        complexity for insertion in a BST is log(N) where the tree is balanced
+        :complexity worst: O(N^2) - the O(N) for the n length of potion_valuation remains
+        the same but the insertion
         :average complexity: O(N) x O(log(N))
         """
         # TODO: CHECK THIS IS RIGHT AND GET RID OF PRINT STATEMENTS
@@ -94,9 +99,6 @@ class Game:
             profit_margin = valuation - vendor_buy_price
             ratio = profit_margin / vendor_buy_price
             quantity = self.potion_table[name].quantity
-
-            print(f"Ratios: {ratio}")
-            print(f"Quantity: {quantity}")
 
             if ratio not in ratio_tree:     # Binary Tree Insertion Time complexity: O(log(N))
                 ratio_tree[ratio] = (False, (name, vendor_buy_price, valuation, profit_margin, ratio, quantity))
@@ -161,7 +163,7 @@ class Game:
                     print(f"Bought the whole stock: {quantity}L for ${vendor_buy_price} each\n")
                     money -= quantity * vendor_buy_price  # subtract this from the money
                     print(f"Money left: {money}")
-                else:  # bought the whole inventory
+                else:
                     if best_ratio_item[0]:  # if it was a part of a duplicate and it was only the first one used, put it back
                         original_stack.push(item)
                     new_quantity = money / vendor_buy_price  # quantity of potion purchased (L)
