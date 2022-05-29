@@ -7,7 +7,23 @@ from avl import AVLTree
 """ 
 Main game being run
 """
+
+
 class Game:
+    """
+    REASON FOR USED ADTs
+        potion_table : Hash Table
+            Hash tables, have a search time complexity of O(1) i.e constant in the
+            best case and O(n) in the worst case (if implemented properly, it will
+            usually always be constant). To minimise our searching time, we have
+            chosen a hash table for potion_table
+
+        inventory : AVL Tree
+            AVL tree has a search, deletion, and insertion time complexity of
+            O(log(N)) in the worst and O(1) in the best case, when the tree is empty.
+            To match our required time complexity for the all the used operations (when
+            finding the correct potion), we decided to go with the AVL tree.
+    """
 
     def __init__(self, seed=0) -> None:
         self.rand = RandomGen(seed=seed)
@@ -41,14 +57,22 @@ class Game:
 
     def choose_potions_for_vendors(self, num_vendors: int) -> list:
         """
-
+        This method completes the vendor potion selection process and returns a list
+        of potion names along with their quantity in inventory
+        :param num_vendors: int
+        :pre: num_vendors > 0
+        :required complexity: 𝐎(𝐶 × log(𝑁))
+        :return: list of tuples [(name_of_potion, quantity)]
         """
+
         # self.inventory.print_tree()
         vendor_potion_list = []
         # saved_inventory = self.inventory
+
+        # O(C) -> C is the number of vendors
         for i in range(num_vendors):
             p = self.rand.randint(len(self.inventory))
-
+            # O(log(N)) -> N is the number of potions
             for j, key in enumerate(self.inventory):
                 # p starts from 1 - k, hence we add 1 to j
                 if p == j + 1:
@@ -93,7 +117,7 @@ class Game:
         :average complexity: O(N) x O(log(N)) 
         """
         # TODO: CHECK THIS IS RIGHT AND GET RID OF PRINT STATEMENTS
-        for i in range(len(potion_valuations)): # Loop time complexity: O(N) where N is the length of potion_valuations
+        for i in range(len(potion_valuations)):  # Loop time complexity: O(N) where N is the length of potion_valuations
 
             if len(potion_valuations) == 0:
                 raise ValueError(f"List has length: {len(potion_valuations)}")
@@ -104,7 +128,7 @@ class Game:
             ratio = profit_margin / vendor_buy_price
             quantity = self.potion_table[name].quantity
 
-            if ratio not in ratio_tree:     # Binary Tree Insertion Time complexity: O(log(N))
+            if ratio not in ratio_tree:  # Binary Tree Insertion Time complexity: O(log(N))
                 ratio_tree[ratio] = (False, (name, vendor_buy_price, valuation, profit_margin, ratio, quantity))
             else:
                 tree_stack = LinkedStack()
@@ -130,7 +154,7 @@ class Game:
                 of the tree must be searched to find the key
             :average complexity: O(M) x O(N)
         """
-        for money in starting_money:    # Loop Time complexity: O(M)
+        for money in starting_money:  # Loop Time complexity: O(M)
 
             if ratio_tree.root is None:
                 raise TypeError("Ratio tree does not exist")
@@ -158,7 +182,8 @@ class Game:
                     if original_stack.is_empty():  # if the stack is empty (no more duplicates)
                         checked.append(max_ratio)  # add the node to visited nodes
                         del ratio_tree[max_ratio]  # delete the node at that key
-                        ratio_tree[max_ratio] = (True, temporary_stack) # reset it by putting the temp stack in place of the whole stack
+                        ratio_tree[max_ratio] = (
+                            True, temporary_stack)  # reset it by putting the temp stack in place of the whole stack
                 else:
                     checked.append(max_ratio)  # if no duplicate, add key to checked list
                     item = best_ratio_item[1]  # item is the second element bc there is no stack
@@ -172,7 +197,8 @@ class Game:
                     money -= quantity * vendor_buy_price  # subtract this from the money
                     print(f"Money left: {money}")
                 else:
-                    if best_ratio_item[0]:  # if it was a part of a duplicate and it was only the first one used, put it back
+                    if best_ratio_item[
+                        0]:  # if it was a part of a duplicate and it was only the first one used, put it back
                         original_stack.push(item)
                     new_quantity = money / vendor_buy_price  # quantity of potion purchased (L)
                     print(f"Went broke buying: {new_quantity}L for ${vendor_buy_price} each\n")
