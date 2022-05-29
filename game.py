@@ -5,7 +5,6 @@ from potion import Potion
 from avl import AVLTree
 
 
-
 class Game:
 
     def __init__(self, seed=0) -> None:
@@ -74,16 +73,19 @@ class Game:
         """
         day_profits = []
         ratio_tree = AVLTree()
-        for i in range(len(potion_valuations)): # O(N)
+        """
+        Overall Time complexity: O(N) x O(log(N))
+        """
+        for i in range(len(potion_valuations)):     # Loop time complexity: O(N) where N is the length of potion_valuations
             name, valuation = potion_valuations[i]
             vendor_buy_price = self.potion_table[name].buy_price
             profit_margin = valuation - vendor_buy_price
             ratio = profit_margin / vendor_buy_price
+            print(f"Ratios: {ratio}")
             quantity = self.potion_table[name].quantity
             print(f"Quantity: {quantity}")
 
-            # assuming normal potions
-            if ratio not in ratio_tree:
+            if ratio not in ratio_tree:     # Binary Tree Insertion Time complexity: O(log(N))
                 ratio_tree[ratio] = (False, (name, vendor_buy_price, valuation, profit_margin, ratio, quantity))
             else:
                 tree_stack = LinkedStack()
@@ -93,48 +95,52 @@ class Game:
                 tree_stack.push((name, vendor_buy_price, valuation, profit_margin, ratio, quantity))
                 ratio_tree[ratio] = (True, tree_stack)
 
-        for money in starting_money: # O(M)
+        """
+        Overall time complexity: O(M) x O(N)
+        """
+        for money in starting_money:  # Loop Time complexity: O(M)
             checked = []
-            dup_checker = []
-            current_stack = None
+            temporary_stack = LinkedStack()
             profit_for_day = 0
+            print(f"\nStaring Day Money: {money}")
+
             while money > 0:
-                max_ratio = 0
-                for ratio in ratio_tree: # O(N)
-                    if ratio > max_ratio and not (ratio in checked):
+                max_ratio = ratio_tree.get_minimal(ratio_tree.root).key
+                for ratio in ratio_tree:  # Loop Time complexity: O(N)
+                    if ratio >= max_ratio and not (ratio in checked):
                         max_ratio = ratio
 
-                # check is the current ratio is in the duplicate list
                 best_ratio_item = ratio_tree[max_ratio]
-                if best_ratio_item[0]: # checks is the stack is True (duplicate)
-                    whole_stack = best_ratio_item[1]  # put the stack into variable
-                    check_item = whole_stack.peek() # peek at the first element of the stack
-                    if check_item[0] not in dup_checker: # checks if that element has already been visited
-                        item = whole_stack.peek() # if no then item is now
-                        dup_checker.append(item[0])
-                    elif check_item[0] in dup_checker:
-                        temp_item = whole_stack.pop()
-                        item = whole_stack.peek()
-                        whole_stack.push(temp_item)
-                        dup_checker.append(item[0])
-                else:
-                    checked.append(max_ratio)
-                    item = best_ratio_item[1]
+                whole_stack = best_ratio_item[1]
 
-                print(item)
-                name, vendor_buy_price, valuation, profit_margin, ratio, quantity = item
-                # when we can buy all of the potion. -> Potion finishes
-                if money >= quantity * vendor_buy_price:
-                    profit_for_day += quantity * valuation  # Money earned from sale of potion
-                    print(quantity)
-                    money -= quantity * vendor_buy_price # Available money is reduced
+                if best_ratio_item[0]:  # checks is the stack is True (duplicate)
+                    item = whole_stack.pop()  # pops it off
+                    temporary_stack.push(item)  # pushes it into the temporary stack
+
+                    if whole_stack.is_empty():  # if the stack is empty (no more duplicates)
+                        checked.append(max_ratio)  # add the node to visited nodes
+                        del ratio_tree[max_ratio]  # delete the node at that key
+                        ratio_tree[max_ratio] = (True, temporary_stack)  # reset it by putting the temp stack in place of the whole stack
                 else:
-                    # we spend all our money buying the potions
-                    # (which is available in sufficient quantity) -> Money Finishes
+                    checked.append(max_ratio)  # if no duplicate, add key to checked list
+                    item = best_ratio_item[1]  # item is the second element bc there is no stack
+
+                print(f"Potion bought: {item}")
+                name, vendor_buy_price, valuation, profit_margin, ratio, quantity = item  # split item into its parts
+
+                if money >= quantity * vendor_buy_price:  # if we can buy the whole inventory and still have money left
+                    profit_for_day += quantity * valuation  # whole inventory * adventurer buy price
+                    print(f"Bought the whole stock: {quantity}L for ${vendor_buy_price} each\n")
+                    money -= quantity * vendor_buy_price  # subtract this from the money
+                    print(f"Money left: {money}")
+
+                else:  # bought the whole inventory
+                    if best_ratio_item[0] and whole_stack.is_empty:  # if it was a part of a duplicate and it was only the first one used, put it back
+                        whole_stack.push(item)
                     new_quantity = money / vendor_buy_price  # quantity of potion purchased (L)
-                    print(new_quantity)
-                    profit_for_day += new_quantity * valuation # money earned from sale of potion
-                    money = 0
+                    print(f"Went broke buying: {new_quantity}L for ${vendor_buy_price} each\n")
+                    profit_for_day += new_quantity * valuation  # money earned from sale of potion
+                    money = 0  # set money to 0 since we broke
 
             day_profits.append(profit_for_day)
 
