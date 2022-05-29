@@ -134,10 +134,10 @@ class Game:
         if the tree contains the key already, it simply changes the boolean in the 
         tuple to True and creates a stack to store each potion with the same key.
         """
-        for i in range(len(potion_valuations)):
+        if len(potion_valuations) == 0:
+            raise ValueError(f"List has length: {len(potion_valuations)}")
 
-            if len(potion_valuations) == 0:
-                raise ValueError(f"List has length: {len(potion_valuations)}")
+        for i in range(len(potion_valuations)):
 
             name, valuation = potion_valuations[i]
             vendor_buy_price = self.potion_table[name].buy_price
@@ -158,7 +158,6 @@ class Game:
         """
             Iterates through the money values for each day and calculates the money remaining 
             at the end of each iteration(day)
-            
             :pre: the tree must exist and its root must not be None
             :raises Exception: if the tree does not exist
             :pre: there must be integer values in starting_money list
