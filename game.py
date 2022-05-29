@@ -100,9 +100,14 @@ class Game:
                            by the adventurers
         :param arg2: starting_money: is a list containing, for each attempt, the starting allowance the player has.
 
-        :complexity best case: 𝐎(𝑁 × log(𝑁) + 𝑀 × log(N))
-        :complexity worst case: 𝐎(𝑁^2 + 𝑀 × N)
-        :average complexity: 𝐎(𝑁 × log(𝑁) + 𝑀 × 𝑁)
+        :complexity best case: 𝐎(𝑁 + 𝑀) - where the O(N) is the n length of
+            the potion_valuation that is being iterated through. The best case
+            complexity for insertion and searcg a binary search tree is O(1)
+            where the tree is empty or the searching key is at the tree root.
+        :complexity worst case: 𝐎(𝑁 x log(N) + 𝑀 × N) - the O(N) for the n length of potion_valuation remains
+            the same but the insertion into the BST becomes log(N) where the tree is balanced and sorted
+            so the given key can be found by comparing keys. This is the same complexity for searching
+            where the tree is sorted and balanced
         """
 
         day_profits = []
@@ -112,12 +117,12 @@ class Game:
         This for loop goes through each potion_valuation and creates the binary tree.
         :pre: this list of potion_valuation must contain 1 or more elements
         :raises ValueError: if the list is empty
-        :complexity best: O(N) x O(log(N)) - where the O(N) is the n length of 
-        the potion_valuation that is being iterated through. The best case 
-        complexity for insertion in a BST is log(N) where the tree is balanced
-        :complexity worst: O(N^2) - the O(N) for the n length of potion_valuation remains
-        the same but the insertion
-        :average complexity: O(N) x O(log(N))
+        
+        This solution requires for each value of the potion_valuation have a profit 
+        ratio calculated. This is then used as its key to be inserted into a sorted 
+        AVL tree as a tuple with a boolean value. To solve the issue of duplicates, 
+        if the tree contains the key already, it simply changes the boolean in the 
+        tuple to True and creates a stack to store each potion with the same key.
         """
         for i in range(len(potion_valuations)):
 
@@ -148,9 +153,6 @@ class Game:
             :raises Exception: if the tree does not exist
             :pre: there must be integer values in starting_money list
             :raises Exception: if the list has not been defined
-            :complexity best: O(M) x O(log(N))
-            :complexity worst: O(M) x O(N)
-            :average complexity: O(M) x O(N)
         """
         for money in starting_money:    # Loop Time complexity: O(M)
 
