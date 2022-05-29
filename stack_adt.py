@@ -38,8 +38,7 @@ class Stack(ABC, Generic[T]):
 
     def is_empty(self) -> bool:
         """ Returns True iff the stack is empty. """
-        if len(self) == 0:
-            return True
+        return len(self) == 0
 
     @abstractmethod
     def is_full(self) -> bool:
