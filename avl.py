@@ -24,15 +24,34 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
         BinarySearchTree.__init__(self)
 
     def __setitem__(self, key: K, item: I) -> None:
-        self.root = self.insert_aux(self.root, key, item)
-        #self.print_tree()
+        """
+        Overwrite magic method to insert new node into binary tree.
+        Calls insert_aux, a recursive helper function. See insert_aux for more indepth explanation
+        :complexity: Best O(1), if tree is empty. Worst O(log(N)), where N is the number of elements
+                        of the balanced tree
+        :return: Updated root of binary tree post-insertion and post-rebalancing
+        """
+        try:
+            if type(key) == int or type(key) == float:
+                self.root = self.insert_aux(self.root, key, item)
+            else:
+                raise TypeError("Ket must be a real number")
+        except Exception as e:
+            print(f"Error {type(e)}: {e}")
 
     def insert_aux(self, current: AVLTreeNode, key: K, item: I) -> AVLTreeNode:
         """
-            Attempts to insert an item into the tree, it uses the Key to insert
-            it. After insertion, performs sub-tree rotation whenever it becomes
-            unbalanced.
-            returns the new root of the subtree.
+            Called by __setitem__(self, key: K, item: I).
+            Recursively inserts a new node into binary tree, using the key as sorting criteria.
+            After insertion, calls rebalance to ensure tree balance factor is maintained.
+            :param current: the root of the tree or subtree to insert the new node into
+            :param key: the key of the node, used to determine where to insert
+            :param item: the data/value of the node
+            :pre: key is a real number for purposes of gt/lt/eq operations. Checked in __setitem__ method
+            :post: rest of tree is unchanged beyond rebalancing if necessary. If key was duplicate, don't insert.
+            :raises ValueError: if key is a duplicate value
+            :complexity: Best and worst O(1). See __setitem__ for complexity of full recursive call
+            :returns: TreeNode. At end of recursion, returns updated root of binary tree.
         """
         if current is None:  # base case: at the leaf
             current = AVLTreeNode(key, item)
@@ -45,9 +64,9 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
         else:  # key == current.key. Duplication should cause error
             raise ValueError('Inserting duplicate item')
 
-        # Finally, update heights rebalance current root after insertion completed (postorder processing)
+        # Finally, update heights and rebalance current root after insertion completed (postorder processing)
         current.height = max(self.get_height(current.left), self.get_height(current.right)) + 1
-        return self.rebalance(current)  # return new root of rebalanced tree
+        return self.rebalance(current)  # return new root of rebalanced tree. O(1)
 
     def get_height(self, current: AVLTreeNode) -> int:
         """
@@ -73,10 +92,14 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
 
     def delete_aux(self, current: AVLTreeNode, key: K) -> AVLTreeNode:
         """
-            Attempts to delete an item from the tree, it uses the Key to
-            determine the node to delete. After deletion,
-            performs sub-tree rotation whenever it becomes unbalanced.
-            returns the new root of the subtree.
+
+            :param current: root node of tree or sub-tree to search through for deletion
+            :param key: key of node to be deleted
+            :pre:
+            :post:
+            :raises ValueError:
+            :complexity:
+            :returns:
         """
         if current is None:  # key not found
             raise ValueError('Deleting non-existent item')
@@ -118,16 +141,29 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
                       /     \                           /     \
                  center     r-tree                 l-tree     center
 
-            :complexity: O(1)
+            :pre: current is a treenode that has a right node
+            :post:  Tree is reorganised as shown above. Subtrees of reorganised nodes are unaffected
+            :complexity: O(1) best and worst case
+            :returns: the new root, current.right
         """
-        child = current.right
-        center = child.left
-        child.left = current
-        current.right = center
-        current.height = 1 + max(self.get_height(current.left), self.get_height(current.right))
-        child.height = 1 + max(self.get_height(child.left), self.get_height(child.right))
+        #  Perform rotation, following example in docstring
+        try:
+            if current.right is None:
+                # If current has no right node, nothing can be rotated into current's original place
+                raise ValueError("current is missing a left node")
 
-        return child
+            child = current.right
+            center = child.left
+            child.left = current
+            current.right = center
+            #  Update height of freshly rotated nodes. Critical for rebalancing
+            current.height = 1 + max(self.get_height(current.left), self.get_height(current.right))
+            child.height = 1 + max(self.get_height(child.left), self.get_height(child.right))
+
+            return child
+
+        except Exception as e:
+            print(f"Error {type(e)}: {e}")
 
     def right_rotate(self, current: AVLTreeNode) -> AVLTreeNode:
         """
@@ -142,17 +178,30 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
                   child       r-tree     --------->     l-tree     current
                  /     \                                           /     \
             l-tree     center                                 center     r-tree
-
-            :complexity: O(1)
+            :pre: current is a treenode that has a left node
+            :post:  Tree is reorganised as shown above. Subtrees of reorganised nodes are unaffected
+            :complexity: O(1) best and worst case
+            :returns: the new root, current.left
         """
-        child = current.left
-        center = child.right
-        child.right = current
-        current.left = center
-        current.height = 1 + max(self.get_height(current.left), self.get_height(current.right))
-        child.height = 1 + max(self.get_height(child.left), self.get_height(child.right))
 
-        return child
+        #  Perform right rotation, following example in docstring
+        try:
+            if current.left is None:
+                # If current has no left node, nothing can be rotated into current's original place
+                raise ValueError("current is missing a left node")
+
+            child = current.left
+            center = child.right
+            child.right = current
+            current.left = center
+            #  Update height of freshly rotated nodes. Critical for rebalancing
+            current.height = 1 + max(self.get_height(current.left), self.get_height(current.right))
+            child.height = 1 + max(self.get_height(child.left), self.get_height(child.right))
+
+            return child
+
+        except Exception as e:
+            print(f"Error {type(e)}: {e}")
 
     def rebalance(self, current: AVLTreeNode) -> AVLTreeNode:
         """ Compute the balance of the current node.

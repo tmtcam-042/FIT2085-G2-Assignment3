@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 from linked_stack import LinkedStack
 from random_gen import RandomGen
 from hash_table import LinearProbePotionTable
@@ -5,7 +7,6 @@ from potion import Potion
 from avl import AVLTree
 from array_list import ArrayList
 from stack_adt import Stack
-
 
 
 class Game:
@@ -28,7 +29,7 @@ class Game:
             self.potion_table[name] = Potion.create_empty(_type, name, price)
             print(self.potion_table)
 
-    def add_potions_to_inventory(self, potion_name_amount_pairs: list[tuple[str, float]]) -> None:
+    def add_potions_to_inventory(self, potion_name_amount_pairs: List[Tuple[str, float]]) -> None:
         """
         Binary tree!
         :param potion_name_amount_pairs:
@@ -37,8 +38,8 @@ class Game:
         """
         for potion in potion_name_amount_pairs:
             name, amount = potion
-            self.potion_table[name].quantity = amount
             potion_object = self.potion_table[name]
+            potion_object.quantity = amount
             self.inventory[potion_object.buy_price] = (potion_object, amount)
         self.inventory.print_tree()
 
@@ -51,13 +52,14 @@ class Game:
         saved_inventory = self.inventory
         for i in range(num_vendors):
             p = self.rand.randint(len(self.inventory))
+            pth_index = len(self.inventory) - p
 
-            for j, key in enumerate(self.inventory):
+            for j, key in reversed(list(enumerate(self.inventory))):
                 # p starts from 1 - k, hence we add 1 to j
-                if p == j + 1:
+                if pth_index == j:
                     node = self.inventory.get_tree_node_by_key(key).item
                     name, amount = node[0].name, node[1]
-                    # self.potion_table[name].quantity = amount
+                    self.potion_table[name].quantity = amount
                     vendor_potion_list.append((name, amount))
                     del self.inventory[key]
                     break
@@ -66,7 +68,7 @@ class Game:
         self.inventory.print_tree()
         return vendor_potion_list
 
-    def solve_game(self, potion_valuations: list[tuple[str, float]], starting_money: list[int]) -> list[float]:
+    def solve_game(self, potion_valuations: List[Tuple[str, float]], starting_money: List[int]) -> List[float]:
         """
         potion_valuations: is a list of potions that each vendor is selling, paired with its valuation
                            by the adventurers
@@ -76,7 +78,7 @@ class Game:
         """
         day_profits = []
         ratio_tree = AVLTree()
-        for i in range(len(potion_valuations)): # O(N)
+        for i in range(len(potion_valuations)):  # O(N)
             name, valuation = potion_valuations[i]
             vendor_buy_price = self.potion_table[name].buy_price
             profit_margin = valuation - vendor_buy_price
@@ -95,13 +97,13 @@ class Game:
                 tree_stack.push((name, vendor_buy_price, valuation, profit_margin, ratio, quantity))
                 ratio_tree[ratio] = (True, tree_stack)
 
-        for money in starting_money: # O(M)
+        for money in starting_money:  # O(M)
             checked = []
             dup_checker = []
             profit_for_day = 0
             while money > 0:
                 max_ratio = 0
-                for ratio in ratio_tree: # O(N)
+                for ratio in ratio_tree:  # O(N)
                     if ratio > max_ratio and not (ratio in checked):
                         max_ratio = ratio
 
@@ -126,13 +128,13 @@ class Game:
                 if money >= quantity * vendor_buy_price:
                     profit_for_day += quantity * valuation  # Money earned from sale of potion
                     print(quantity)
-                    money -= quantity * vendor_buy_price # Available money is reduced
+                    money -= quantity * vendor_buy_price  # Available money is reduced
                 else:
                     # we spend all our money buying the potions
                     # (which is available in sufficient quantity) -> Money Finishes
                     new_quantity = money / vendor_buy_price  # quantity of potion purchased (L)
                     print(new_quantity)
-                    profit_for_day += new_quantity * valuation # money earned from sale of potion
+                    profit_for_day += new_quantity * valuation  # money earned from sale of potion
                     money = 0
 
             day_profits.append(profit_for_day)
