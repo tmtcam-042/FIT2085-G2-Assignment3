@@ -48,7 +48,7 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
             :param key: the key of the node, used to determine where to insert
             :param item: the data/value of the node
             :pre: key is a real number for purposes of gt/lt/eq operations. Checked in __setitem__ method
-            :post: rest of tree is unchanged beyond rebalancing if necessary. If key was duplicate, don't insert.
+            :post: tree is rebalanced and heights are updated. If key was duplicate, don't insert.
             :raises ValueError: if key is a duplicate value
             :complexity: Best and worst O(1). See __setitem__ for complexity of full recursive call
             :returns: TreeNode. At end of recursion, returns updated root of binary tree.
