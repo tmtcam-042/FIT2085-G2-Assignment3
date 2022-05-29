@@ -23,7 +23,6 @@ class Game:
         for potion in potion_data:
             name, _type, price = potion
             self.potion_table[name] = Potion.create_empty(_type, name, price)
-            print(self.potion_table)
 
     def add_potions_to_inventory(self, potion_name_amount_pairs: list[tuple[str, float]]) -> None:
         """
